@@ -100,9 +100,9 @@ def visualize_problem(robot, obstacles, start, goal):
     return
 
 def sample():
-    x = np.random.randint(101)/10.
-    y = np.random.randint(101)/10.
-    return (x,y)
+    x = np.random.randint(99)/10.
+    y = np.random.randint(99)/10.
+    return (x+.1,y+.1)
 
 def visualize_points(points, robot, obstacles, start, goal):
     fig = plt.figure()
@@ -184,6 +184,7 @@ def isCollisionFree(robot, point, obstacles):
             return False
 
     allRobotPoints = []
+
     for i in range(0, len(transpPos)):
         allRobotPoints.append(transpPos[i])
         if (i == len(transpPos) - 1):
@@ -202,8 +203,6 @@ def isCollisionFree(robot, point, obstacles):
         if(len(i)!=len(tuplesorted)):
             continue
         polyTupledSorted = sorted(i, key=lambda tup: tup[0])
-        print(tuplesorted)
-        print(polyTupledSorted)
         if(tuplesorted == polyTupledSorted):
             return False
     return True
@@ -299,6 +298,10 @@ def pointToPolygon(point, polygon):
     poly = mplPath.Path(polygon)
     return poly.contains_point(point)
 
+def distance(point1, point2):
+    x = (point2[0]-point1[0]) ** 2
+    y = (point2[1]-point1[1]) ** 2
+    return np.sqrt(x+y)
 
 def helper(world_file, problem_file):
     temp = parse_problem(world_file, problem_file)
@@ -308,11 +311,11 @@ def helper(world_file, problem_file):
     #print(robot)
     #print(obs)
     #print(probs)
-    visualize_problem(robot, obs, [1,1],[8,8])
-    points = [(5.2,6.7), (9.2,2.3),(2,4)]
-    endPoint = (4,3.26)
-    #print(isCollisionFree(robot, endPoint, obs))
-    #visualize_points(points, robot, obs, [1,1],endPoint)
+    #visualize_problem(robot, obs, [1,1],[8,8])
+    points = [(2,8),(8,4)]
+    endPoint = (4,3.25)
+    print(isCollisionFree(robot, endPoint, obs))
+    visualize_points(points, robot, obs, [5,5],endPoint)
     #print(lineToLine(line1,line2))
 
-helper("robot_env_01.txt","probs_01.txt")
+#helper("robot_env_01.txt","probs_01.txt")

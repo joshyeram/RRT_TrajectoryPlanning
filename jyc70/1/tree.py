@@ -2,46 +2,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.path as mplPath
 
+from problem1 import *
+
 class Node:
-    point = (-1,-1)
-    neighbors = []
-    parent = None
-    state = -1
-    right = None
-    left = None
 
     def __init__(self, point, state):
         self.point = point
+        self.neighbors = []
+        self.parent = None
         self.state = state
-
-    # when adding, 2 cases
-    # has parent: 1. go to old parent. 2, delete curr node from neighbors 3. set parent to new parent 4. add parent to neighbor
-    # or fresh node: 1. check if it has parent 2. if not, just add it to neighbors 3. set to parent
-
-    def add(self, otherPt):
-        self.parent = otherPt
-        self.neighbors.append(otherPt)
-        otherPt.addNeighbor(self)
-
-    def changeParent(self, otherPt):
-        temp = self.parent
-        self.neighbors.remove(self.parent)
-        temp.neighbor.remove(self)
-        self.addNeighbor(otherPt)
-        self.parent = otherPt
-
-    def addNeighbor(self, otherPt):
-        if(otherPt not in self.neighbors):
-            self.neighbors.append(otherPt)
-            return True
-        return False
+        self.right = None
+        self.left = None
 
 class Tree:
     robot = None
     obstacles = None
     start = None
     goal = None
-    nodes = []
 
     def __init__(self, robot, obstacles, start, goal):
         self.robot = robot
@@ -61,11 +38,16 @@ class Tree:
             else:
                 ptr = ptr.right
             level += 1
-        return False
+        print(str(point)+": not found")
 
     def add(self, point1, point2):
-        pointToAdd = Node(point2,-1)
-        pointToAdd.add(self.getNode(point1))
+        #print("adding = "+ str(point1)+ " " +str(point2))
+        node1 = self.getNode(point1)
+        node2 = Node(point2, -1)
+        self.insertkd(node2)
+        node1.neighbors.append(node2)
+        node2.neighbors.append(node1)
+        node2.parent = node1
 
     def exists(self, point):
         if(self.getNode(point)==False):
@@ -81,15 +63,18 @@ class Tree:
         level = 0 #if level even = compare horizontal. If level odd = compare vertically
         while(ptr!= None):
             prev = ptr
-            if(level%2 ==0 and node.point[0] < ptr.point[0] or level%2 ==1 and node.point[1] < ptr.point[1]):
+            if((level%2 ==0 and node.point[0] < ptr.point[0]) or (level%2 ==1 and node.point[1] < ptr.point[1])):
                 ptr = ptr.left
             else:
                 ptr = ptr.right
             level += 1
-        if(level % 2 ==0 and node.point[0] < prev.point[0] or level % 2 ==1 and node.point[1] < prev.point[1]):
+        level -= 1
+        if((level % 2 ==0 and node.point[0] < prev.point[0]) or (level % 2 ==1 and node.point[1] < prev.point[1])):
             prev.left = node
+            return
         else:
             prev.right = node
+            return
 
     def nearest(self, point):
         ptr = self.kd
@@ -97,7 +82,7 @@ class Tree:
         temp = []
         while (ptr != None):
             temp.append(ptr)
-            if (level % 2 == 0 and point[0] < ptr.point[0] or level % 2 == 1 and point[1] < ptr.point[1]):
+            if ((level % 2 == 0 and point[0] < ptr.point[0]) or (level % 2 == 1 and point[1] < ptr.point[1])):
                 ptr = ptr.left
             else:
                 ptr = ptr.right
@@ -112,27 +97,43 @@ class Tree:
         y = (point2[1]-point1[1]) ** 2
         return np.sqrt(x+y)
 
+    def getList(self ,point1, point2):
+        dist = self.distance(point1, point2)
+        dist = int(dist) + 1
+        inc = dist * 10
+        d = []
+        xinc = float(point2[0] - point1[0]) / inc
+        yinc = float(point2[1] - point1[1]) / inc
+        for i in range(0, inc + 1):
+            d.append((xinc * i + point1[0], yinc * i + point1[1]))
+        return d
+
     def extend(self, point1, point2):
-        pass
+        pointList = self.getList(point1, point2)
+        far = None
+        for i in pointList:
+            if(isCollisionFree(self.robot, i, self.obstacles)):
+                far = i
+                continue
+            else:
+                break
+        if(far == None or far==point1):
+            return False
+        self.add(point1,far)
+        return far
 
-tree = Tree(None, None, (5,5), (8,8))
-node1 = Node((2.5,2.5), -1)
-node2 = Node((7.5,7.5), -1)
-node3 = Node((1,7.5), -1)
-node4 = Node((6,3.5), -1)
-node5 = Node((4,6), -1)
-node6 = Node((9,5), -1)
+    def getAll(self):
+        temp = []
+        stack = []
+        ptr = self.kd
+        while(len(stack)!=0 or ptr != None):
+            if(ptr!= None):
+                stack.insert(0,ptr)
+                ptr = ptr.left
+            else:
+                cur = stack.pop()
+                temp.append(cur)
+                ptr = cur.right
 
-tree.insertkd(node1)
-tree.insertkd(node2)
-tree.insertkd(node3)
-tree.insertkd(node4)
-tree.insertkd(node5)
-tree.insertkd(node6)
+        return temp
 
-print(tree.nearest((8,1)))
-print(tree.nearest((4.5,4.5)))
-print(tree.getNode((2.5,2.5)))
-print(tree.getNode((4,6)))
-print(tree.getNode((9,6)))
-print(tree.getNode((9,1)))
