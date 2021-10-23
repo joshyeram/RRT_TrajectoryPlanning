@@ -5,7 +5,7 @@ import matplotlib.path as mplPath
 from problem1 import *
 from tree import *
 
-def drawTree(tree, robot, obstacles, start, goal):
+def drawTree(tree, robot, obstacles, start, goal, path):
     fig = plt.figure()
     axis = fig.gca()
     axis.spines["top"].set_linewidth(2)
@@ -44,21 +44,79 @@ def drawTree(tree, robot, obstacles, start, goal):
             plt.plot(x, y, 'bo', linestyle='solid')
         draw.pop(0)
 
+    if(path!=False):
+        for i in range(len(path)-1):
+            x = [path[i][0], path[i+1][0]]
+            y = [path[i][1], path[i+1][1]]
+            plt.plot(x, y, 'ro', linestyle='solid')
+
     plt.xlim(0, 10)
     plt.ylim(0, 10)
     plt.gca().set_aspect('equal', adjustable='box')
 
     plt.show()
 
+def getPath(tree, start, goal):
+    endNode = tree.getNode(goal)
+    path = []
+    while(endNode!=None):
+        path.append(endNode.point)
+        endNode = endNode.parent
+    temp = list(reversed(path))
+    print(temp)
+    return temp
+
 def rrt(robot, obstacles, start, goal, iter_n):
     tree = Tree(robot, obstacles, start, goal)
+    path = []
     while(iter_n >=0):
         #print(iter_n)
         sampled = sample()
+        if(iter_n % 10 ==0):
+            sampled = goal
+        if(tree.getNode(sampled)!=False):
+            continue
         near = tree.nearest(sampled)
         actual = tree.extend(near, sampled)
+        if(tree.distance(actual, goal)<=.25):
+            attempt = tree.extend(actual, goal)
+            if(attempt == goal):
+                path = getPath(tree, start, goal)
+                drawTree(tree, robot, obstacles, start, goal, path)
+                return path
         iter_n-=1
-    drawTree(tree, robot, obstacles, start, goal)
+    lastNode = lastResort(tree, robot, obstacles,goal)
+    if(lastNode == -1):
+        drawTree(tree, robot, obstacles, start, goal, path)
+        return False
+    attempt = tree.extend(lastNode.point, goal)
+    path = getPath(tree, start, goal)
+    drawTree(tree, robot, obstacles, start, goal, path)
+    return path
+
+def lastResort(tree, robot, obstacles, goal):
+    all = tree.getAll()
+    distances = []
+    far = None
+    added = False
+    for i in all:
+        pointList = tree.getList(i.point, goal)
+        for j in pointList:
+            if(isCollisionFree(robot, j, obstacles) == False):
+                distances.append(-1)
+                added = True
+                break
+        if(added == False):
+            distances.append(tree.distance(i.point, goal))
+        added = False
+    for i in distances:
+        if i >= 0:
+            added = True
+            break
+    if(added == True):
+        index = distances.index(min([i for i in distances if i > 0]))
+        return all[index]
+    return -1
 
 def visualize_path(robot, obstacles, path):
     return
@@ -70,4 +128,4 @@ def visualize_rrt(robot, obstacles, start, goal, iter_n):
     return
 
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
-rrt(temp[0], temp[1], (1,1), (9,9), 100)
+print(rrt(temp[0], temp[1], (3,3), (8.5,8.5), 500))
