@@ -5,7 +5,7 @@ import matplotlib.path as mplPath
 from problem1 import *
 from tree import *
 
-def drawTree(tree, robot, obstacles, start, goal, path):
+def drawEntireTree(tree, robot, obstacles, start, goal, path):
     fig = plt.figure()
     axis = fig.gca()
     axis.spines["top"].set_linewidth(2)
@@ -63,7 +63,7 @@ def getPath(tree, start, goal):
         path.append(endNode.point)
         endNode = endNode.parent
     temp = list(reversed(path))
-    print(temp)
+    #print(temp)
     return temp
 
 def rrt(robot, obstacles, start, goal, iter_n):
@@ -82,16 +82,16 @@ def rrt(robot, obstacles, start, goal, iter_n):
             attempt = tree.extend(actual, goal)
             if(attempt == goal):
                 path = getPath(tree, start, goal)
-                drawTree(tree, robot, obstacles, start, goal, path)
+                #drawEntireTree(tree, robot, obstacles, start, goal, path)
                 return path
         iter_n-=1
     lastNode = lastResort(tree, robot, obstacles,goal)
     if(lastNode == -1):
-        drawTree(tree, robot, obstacles, start, goal, path)
+        #drawEntireTree(tree, robot, obstacles, start, goal, path)
         return False
     attempt = tree.extend(lastNode.point, goal)
     path = getPath(tree, start, goal)
-    drawTree(tree, robot, obstacles, start, goal, path)
+    #drawEntireTree(tree, robot, obstacles, start, goal, path)
     return path
 
 def lastResort(tree, robot, obstacles, goal):
@@ -117,15 +117,6 @@ def lastResort(tree, robot, obstacles, goal):
         index = distances.index(min([i for i in distances if i > 0]))
         return all[index]
     return -1
-
-def visualize_path(robot, obstacles, path):
-    return
-
-def visualize_configuration(robot, obstacles, start, goal):
-    return
-
-def visualize_rrt(robot, obstacles, start, goal, iter_n):
-    return
 
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
 print(rrt(temp[0], temp[1], (3,3), (8.5,8.5), 500))

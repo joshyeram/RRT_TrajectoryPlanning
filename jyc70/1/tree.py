@@ -75,57 +75,49 @@ class Tree:
         level -= 1
         if((level % 2 ==0 and node.point[0] < prev.point[0]) or (level % 2 ==1 and node.point[1] < prev.point[1])):
             prev.left = node
-            return
         else:
             prev.right = node
-            return
 
     def closer(self, check, point1, point2):
-
         if(point1==None):
             return point2
         if(point2 == None):
             return point1
-        if (type(point1) == Node):
-            point1 = point1.point
-        if (type(point2) == Node):
-            point2 = point2.point
-        if(distance(check, point1) < distance(check, point2)):
+        if(distance(check, point1.point) < distance(check, point2.point)):
             return point1
         return point2
 
-    def nearestOpt(self, root, point, depth):
+    def nearestOpt(self, root, pointC, level): #root node, point point, depth
         if(root == None):
             return None
 
-        if(point[depth % 2] < root.point[depth % 2]):
+        splitPoint = level % 2
+
+        if(pointC[splitPoint] < root.point[splitPoint]):
             nextCheck = root.left
             oppCheck = root.right
         else:
             nextCheck = root.right
             oppCheck = root.left
 
-        opt = self.closer(point, self.nearestOpt(nextCheck, point, depth+1), root.point)
+        opt = self.closer(pointC, self.nearestOpt(nextCheck, pointC, splitPoint+1), root)
 
-        optX, optY = opt
-        tempX, tempY = point
-        s = (tempX-optX) **2 + (tempY-optY) **2
-
-        if(s > (point[depth % 2] - root.point[depth %2]) **2):
-            opt = self.closer(point, self.nearestOpt(oppCheck, point, depth+1), root)
+        if(distance(pointC, opt.point) > abs(pointC[splitPoint] - root.point[splitPoint])):
+            opt = self.closer(pointC, self.nearestOpt(oppCheck, pointC, splitPoint+1), opt)
 
         return opt
 
-    def nearest1(self, point):
-        return self.nearestOpt(self.kd, point, 0)
     def nearest(self, point):
+        return self.nearestOpt(self.kd, point, 0).point
+
+    def nearestBrute(self, point):
         all = self.getAll()
         temp = []
         for i in all:
             temp.append(distance(point, i.point))
         return all[temp.index(min(temp))].point
 
-    def nearest1(self, point):
+    def nearestBad(self, point):
         ptr = self.kd
         level = 0  # if level even = compare horizontal. If level odd = compare vertically
         temp = []
@@ -193,7 +185,6 @@ class Tree:
                 ptr = cur.right
         return temp
 
-
 """start = (2,2)
 end = (8,8)
 tree = Tree(None, None, start, end)
@@ -222,6 +213,10 @@ while(True):
             except:
                 print("not found")
     else:
-        point = (float(x), float(y))
-        print("for xy: "+ str(point) + "is" + str(tree.nearest(point)))"""
+        try:
+            point = (float(x), float(y))
+            print("for xy nearest: " + str(point) + "is" + str(tree.nearest(point)))
+        except:
+            print("error")"""
+
 
