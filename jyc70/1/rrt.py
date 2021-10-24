@@ -49,6 +49,8 @@ def drawEntireTree(tree, robot, obstacles, start, goal, path):
             x = [path[i][0], path[i+1][0]]
             y = [path[i][1], path[i+1][1]]
             plt.plot(x, y, 'ro', linestyle='solid')
+    else:
+        plt.title("No Path Found")
 
     plt.xlim(0, 10)
     plt.ylim(0, 10)
@@ -64,6 +66,10 @@ def getPath(tree, start, goal):
         endNode = endNode.parent
     temp = list(reversed(path))
     #print(temp)
+    if(len(path)==0):
+        path.append(False)
+        path.append(start)
+        path.append(goal)
     return temp
 
 def rrt(robot, obstacles, start, goal, iter_n):
@@ -117,6 +123,3 @@ def lastResort(tree, robot, obstacles, goal):
         index = distances.index(min([i for i in distances if i > 0]))
         return all[index]
     return -1
-
-temp = parse_problem("robot_env_01.txt","probs_01.txt")
-print(rrt(temp[0], temp[1], (3,3), (8.5,8.5), 500))
