@@ -1,9 +1,31 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import show
 import matplotlib.path as mplPath
 
-from problem1 import *
+from file_parse import *
+from sampler import *
 from tree import *
+
+def drawTree(tree, robot, obstacles, start, goal, path):
+    draw = tree.getAll()
+    while (len(draw) > 0):
+        plt.plot(draw[0].point[0], draw[0].point[1], marker='o', color="blue")
+        for i in draw[0].neighbors:
+            # print("drawing "+ str(draw[0].point)+ " and "+ str(i.point))
+            x = [draw[0].point[0], i.point[0]]
+            y = [draw[0].point[1], i.point[1]]
+            plt.plot(x, y, 'bo', linestyle='solid')
+        draw.pop(0)
+
+    if (path != False):
+        for i in range(len(path) - 1):
+            x = [path[i][0], path[i + 1][0]]
+            y = [path[i][1], path[i + 1][1]]
+            plt.plot(x, y, 'yo', linestyle='solid')
+    else:
+        plt.title("No Path Found")
+    show(block=False)
 
 def drawEntireTree(tree, robot, obstacles, start, goal, path):
     fig = plt.figure()

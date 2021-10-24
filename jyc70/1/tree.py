@@ -2,7 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.path as mplPath
 
-from problem1 import *
+from file_parse import *
+from collision import *
+
+def distance(point1, point2):
+    x = (point2[0]-point1[0]) ** 2
+    y = (point2[1]-point1[1]) ** 2
+    return np.sqrt(x+y)
 
 class Node:
 
@@ -28,7 +34,6 @@ class Tree:
         self.kd = self.start
 
     def getNode(self, point):
-
         if(type(point)==Node):
             point = point.point
         ptr = self.kd
@@ -42,7 +47,6 @@ class Tree:
                 ptr = ptr.right
             level += 1
         return False
-
 
     def add(self, point1, point2):
         #print("adding = "+ str(point1)+ " " +str(point2))
@@ -87,22 +91,22 @@ class Tree:
             return point1
         return point2
 
-    def nearestOpt(self, root, pointC, level): #root node, point point, depth
-        if(root == None):
+    def nearestOpt(self, head, pointC, level): #root node, point point, depth
+        if(head == None):
             return None
 
         splitPoint = level % 2
 
-        if(pointC[splitPoint] < root.point[splitPoint]):
-            nextCheck = root.left
-            oppCheck = root.right
+        if(pointC[splitPoint] < head.point[splitPoint]):
+            nextCheck = head.left
+            oppCheck = head.right
         else:
-            nextCheck = root.right
-            oppCheck = root.left
+            nextCheck = head.right
+            oppCheck = head.left
 
-        opt = self.closer(pointC, self.nearestOpt(nextCheck, pointC, splitPoint+1), root)
+        opt = self.closer(pointC, self.nearestOpt(nextCheck, pointC, splitPoint+1), head)
 
-        if(distance(pointC, opt.point) > abs(pointC[splitPoint] - root.point[splitPoint])):
+        if(distance(pointC, opt.point) > abs(pointC[splitPoint] - head.point[splitPoint])):
             opt = self.closer(pointC, self.nearestOpt(oppCheck, pointC, splitPoint+1), opt)
 
         return opt
