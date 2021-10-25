@@ -5,10 +5,10 @@ import matplotlib.path as mplPath
 from file_parse import *
 from collision import *
 
-def distance(point1, point2):
+"""def distance(point1, point2):
     x = (point2[0]-point1[0]) ** 2
     y = (point2[1]-point1[1]) ** 2
-    return np.sqrt(x+y)
+    return np.sqrt(x+y)"""
 
 class Node:
 
@@ -19,6 +19,7 @@ class Node:
         self.state = state
         self.right = None
         self.left = None
+        self.distanceFromStart = 0
 
 class Tree:
     robot = None
@@ -56,6 +57,7 @@ class Tree:
         node1.neighbors.append(node2)
         node2.neighbors.append(node1)
         node2.parent = node1
+        node2.distanceFromStart = node1.distanceFromStart + self.distance(point1, point2)
 
     def exists(self, point):
         if(self.getNode(point)==False):
@@ -87,7 +89,7 @@ class Tree:
             return point2
         if(point2 == None):
             return point1
-        if(distance(check, point1.point) < distance(check, point2.point)):
+        if(self.distance(check, point1.point) < self.distance(check, point2.point)):
             return point1
         return point2
 
@@ -106,7 +108,7 @@ class Tree:
 
         opt = self.closer(pointC, self.nearestOpt(nextCheck, pointC, splitPoint+1), head)
 
-        if(distance(pointC, opt.point) > abs(pointC[splitPoint] - head.point[splitPoint])):
+        if(self.distance(pointC, opt.point) > abs(pointC[splitPoint] - head.point[splitPoint])):
             opt = self.closer(pointC, self.nearestOpt(oppCheck, pointC, splitPoint+1), opt)
 
         return opt
@@ -114,11 +116,23 @@ class Tree:
     def nearest(self, point):
         return self.nearestOpt(self.kd, point, 0).point
 
+    def nearest_star(self, point,r):
+        all = self.getAll()
+        trueNear = None
+        for i in all:
+            if(self.distance(i.point, point)>r):
+                continue
+            if (trueNear == None or i.distanceFromStart + self.distance(i.point, point) < trueNear.distanceFromStart + self.distance(trueNear.point, point)):
+                trueNear = i
+        if(trueNear==None):
+            trueNear = self.getNode(self.nearest(point))
+        return trueNear
+
     def nearestBrute(self, point):
         all = self.getAll()
         temp = []
         for i in all:
-            temp.append(distance(point, i.point))
+            temp.append(self.distance(point, i.point))
         return all[temp.index(min(temp))].point
 
     def nearestBad(self, point):
@@ -189,6 +203,35 @@ class Tree:
                 ptr = cur.right
         return temp
 
+    def get_cost(self, point):
+        return self.getNode(point).distanceFromStart
+
+    def clearALong(self, point1, point2):
+        p = self.getList(point1,point2)
+        for i in p:
+            if(isCollisionFree(self.robot, i, self.obstacles) == False):
+                return False
+        return True
+
+
+    def rewire(self, point, r):
+        all = self.getAll()
+        neighborhoods = []
+        for i in range(len(all)):
+            if(self.distance(point, all[i].point) <= r):
+                neighborhoods.append(all[i])
+        if(len(neighborhoods)==0):
+            return
+        for i in neighborhoods:
+            if(i.distanceFromStart  > self.getNode(point).distanceFromStart + self.distance(point, i.point) and self.clearALong(point, i.point)):
+                temp = i.parent
+                temp.neighbors.remove(i)
+                i.neighbors.remove(i.parent)
+                i.parent = self.getNode(point)
+                i.neighbors.append(self.getNode(point))
+                self.getNode(point).neighbors.append(i)
+                i.distanceFromStart = self.getNode(point).distanceFromStart + self.distance(point, i.point)
+        return
 """start = (2,2)
 end = (8,8)
 tree = Tree(None, None, start, end)
