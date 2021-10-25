@@ -21,9 +21,7 @@ def getPath(tree, start, goal):
         path.append(goal)
     return temp
 
-
-
-def rrt_star(robot, obstacles, start, goal, iter_n,):
+def rrt_star_vis(robot, obstacles, start, goal, iter_n,):
     tree = Tree(robot, obstacles, start, goal)
     while (iter_n >= 0):
         print(iter_n)
@@ -53,10 +51,39 @@ def rrt_star(robot, obstacles, start, goal, iter_n,):
         return tree,False
     attempt = tree.extend(lastNode.point, goal)
     path = getPath(tree, start, goal)
-    print("here")
-    print(path)
-    print(tree)
     return tree,path
+
+def rrt_star(robot, obstacles, start, goal, iter_n,):
+    tree = Tree(robot, obstacles, start, goal)
+    while (iter_n >= 0):
+        print(iter_n)
+        sampled = sample()
+        if (iter_n % 10 == 0):
+            sampled = goal
+        if (tree.getNode(sampled) != False):
+            iter_n -= 1
+            continue
+        #gets nearest node in consideration of the distance from the start
+        near = tree.nearest_star(sampled, 1)
+        #connects to nearest node
+        actual = tree.extend(near, sampled)
+        #rewire actual node around r
+        tree.rewire(actual, r=1)
+
+        if (tree.getNode(goal)==False and tree.distance(actual, goal) <= .25):
+            attempt = tree.extend(actual, goal)
+
+        iter_n -= 1
+
+    if(tree.getNode(goal)!=False):
+        return getPath(tree, start, goal)
+
+    lastNode = lastResort(tree, robot, obstacles, goal)
+    if (lastNode == -1):
+        return False
+    attempt = tree.extend(lastNode.point, goal)
+    path = getPath(tree, start, goal)
+    return path
 
 
 def lastResort(tree, robot, obstacles, goal):

@@ -360,15 +360,15 @@ def visualize_rrt(robot, obstacles, start, goal, iter_n):
     plt.show()
 
 def visualize_rrt_star(robot, obstacles, start, goal , iter_n):
-    temp = rrt_star(robot, obstacles, start, goal , iter_n)
+    temp = rrt_star_vis(robot, obstacles, start, goal , iter_n)
     configNotDraw(robot, obstacles, start, goal)
-    print("vis_rrt")
-    print(temp[0])
-    print(temp[1])
     drawTree(temp[0], robot, obstacles, start, goal, temp[1])
     plt.plot(start[0], start[1], marker='o', color="green")
     plt.plot(goal[0], goal[1], marker='o', color="red")
-    plt.title("RRT Star in Configuration Space")
+    if(temp[1]==False):
+        plt.title("No path found with RRT Star in Configuration Space")
+    else:
+        plt.title("RRT Star in Configuration Space")
     plt.show()
 
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
@@ -376,11 +376,12 @@ robot = temp[0]
 obs = temp[1]
 
 #path1 = rrt(temp[0], temp[1], (3,3), (8.5,8.5), 200)
-#path2 = rrt_star(temp[0], temp[1], (3,3), (8.5,8.5), 200)
-#pathAnimate(temp[0],obs, path)
+path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
+
+pathAnimate(robot,obs, path2)
 #print(path)
-#visualize_path(temp[0],temp[1], path1[0])
+#visualize_path(temp[0],temp[1], path2)
 #visualize_configuration(robot, obs, (3,3), (8.5,8.5))
 #visualize_rrt(temp[0],temp[1],(3,3), (8.5,8.5), 100)
-visualize_rrt_star(temp[0],temp[1],(3,3), (8.5,8.5), 2000)
+#visualize_rrt_star(temp[0],temp[1],(8.5,8.5),(3,3), 20)
 
