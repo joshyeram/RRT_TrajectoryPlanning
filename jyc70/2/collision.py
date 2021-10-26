@@ -28,15 +28,14 @@ def isCollisionFree(robot, point, obstacles):
     #3: check if any midpoints or vertices are inside of each other
     #4: check if they are the same shape with the same coords
 
-    transpPos = []
+    robot.set_pose(point)
     robotO = robot.transform()
     for i in range(0, len(robotO)):
-        transpPos.append((robotO[i][0] + point[0], robotO[i][1] + point[1]))
-        if (transpPos[i][0] < 0 or transpPos[i][0] > 10):
+        if (robotO[i][0] < 0 or robotO[i][0] > 10):
             return False
-        if (transpPos[i][1] < 0 or transpPos[i][1] > 10):
+        if (robotO[i][1] < 0 or robotO[i][1] > 10):
             return False
-    pos = extendAppend(transpPos)
+    pos = extendAppend(robotO)
     for i in obstacles:
         extended = extendAppend(i)
         for j in range (0,len(extended)-1):
@@ -62,26 +61,26 @@ def isCollisionFree(robot, point, obstacles):
                 avgy = (i[j][1] + i[j+1][1]) / 2
             allPolyPoints.append((avgx,avgy))
     for i in allPolyPoints:
-        if(pointToPolygon(i,transpPos)):
+        if(pointToPolygon(i,robotO)):
             return False
 
     allRobotPoints = []
 
-    for i in range(0, len(transpPos)):
-        allRobotPoints.append(transpPos[i])
-        if (i == len(transpPos) - 1):
-            avgx = (transpPos[0][0] + transpPos[-1][0]) / 2
-            avgy = (transpPos[0][1] + transpPos[-1][1]) / 2
+    for i in range(0, len(pos)):
+        allRobotPoints.append(pos[i])
+        if (i == len(pos) - 1):
+            avgx = (pos[0][0] + pos[-1][0]) / 2
+            avgy = (pos[0][1] + pos[-1][1]) / 2
         else:
-            avgx = (transpPos[i][0] + transpPos[i+1][0]) / 2
-            avgy = (transpPos[i][1] + transpPos[i+1][1]) / 2
+            avgx = (pos[i][0] + pos[i+1][0]) / 2
+            avgy = (pos[i][1] + pos[i+1][1]) / 2
         allRobotPoints.append((avgx, avgy))
     for i in obstacles:
          for j in allRobotPoints:
              if (pointToPolygon(j, i)):
                  return False
 
-    tuplesorted = sorted(transpPos, key=lambda tup: tup[0])
+    tuplesorted = sorted(robotO, key=lambda tup: tup[0])
     for i in obstacles:
         if(len(i)!=len(tuplesorted)):
             continue

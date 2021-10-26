@@ -67,6 +67,15 @@ class Tree:
                 temp = i
         return temp.point
 
+    def nearest_star(self, point, r):
+        if(len(self.nodes)==1):
+            return self.start.point
+        temp = self.nodes[0]
+        for i in self.nodes:
+            if(self.distanceEuc(point,temp.point)>self.distanceEuc(point,i.point)):
+                temp = i
+        return temp.point
+
     def distance(self, point1, point2):
         if(type(point1)==Node):
             point1 = point1.point
@@ -142,7 +151,7 @@ class Tree:
                 thetas.append(inc * i)
             return thetas
 
-        elif(point2[2]>=0 and point1[2]>=0 and point2[2] < point1[2]):
+        elif(point2[2]>=0 and point1[2]>=0 and point2[2] <= point1[2]):
             thetas = []
             diff = np.pi - point1[2]
             inc = diff / 10
@@ -160,7 +169,7 @@ class Tree:
                 thetas.append(inc * i)
             return thetas
 
-        elif(point2[2]<=0 and point1[2]<=0 and point2[2] < point1[2]):
+        elif(point2[2]<=0 and point1[2]<=0 and point2[2] <= point1[2]):
             thetas = []
             diff = np.abs(point1[2])
             inc = diff / 10
@@ -187,16 +196,19 @@ class Tree:
             temp = thetas[0]
             for i in thetas:
                 self.robot.rotation = i
-                if(isCollisionFree(self.robot, point1, self.obstacles)):
+                if(isCollisionFree(self.robot, (point1[0],point1[1],i) , self.obstacles)):
                     temp = i
                 else:
                     break
             self.robot.rotation = temp
 
         pointList = self.getList(point1, point2)
+        temp = []
+        for i in pointList:
+            temp.append((i[0], i[1], self.robot.rotation))
 
         far = None
-        for i in pointList:
+        for i in temp:
             if(isCollisionFree(self.robot, i, self.obstacles)):
                 far = i
                 continue
@@ -212,18 +224,26 @@ class Tree:
         return self.getNode(point).distanceFromStart
 
     def clearALong(self, point1, point2):
-        p = self.getList(point1,point2)
+        thetas = self.getThetaList(point1,point2)
+        for i in thetas:
+            self.robot.set_pose((point1[0],point1[1],i))
+            if(isCollisionFree(self.robot,(point1[0],point1[1],i), self.obstacles)==False):
+                self.robot.set_pose(point1)
+                return False
+        self.robot.rotation = point2[2]
+        p = self.getList(point1, point2)
         for i in p:
-            if(isCollisionFree(self.robot, i, self.obstacles) == False):
+            if(isCollisionFree(self.robot, (i[0],i[1],point2[2]), self.obstacles) == False):
                 return False
         return True
 
     def rewire(self, point, r):
+        print("rewired")
         all = self.nodes
         neighborhoods = []
-        for i in range(len(all)):
-            if(self.distanceEuc(point, all[i].point) <= r):
-                neighborhoods.append(all[i])
+        for i in all:
+            if(self.distance(point, i.point) <= r):
+                neighborhoods.append(i)
         if(len(neighborhoods)==0):
             return
         for i in neighborhoods:
