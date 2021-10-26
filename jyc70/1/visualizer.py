@@ -215,6 +215,7 @@ def pathAnimate(robot, obstacles, path):
         robotPos = robotTranslated(pathPoints[i],robot)
         robotP = np.array(robotPos)
         robotPatch.set_xy(robotP)
+        print(robotP)
         return robotPatch
 
     ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=20)
@@ -377,12 +378,12 @@ robot = temp[0]
 obs = temp[1]
 
 #path1 = rrt(temp[0], temp[1], (3,3), (8.5,8.5), 200)
-#path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
+path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
 
-#pathAnimate(robot,obs, path2)
+pathAnimate(robot,obs, path2)
 #print(path)
 #visualize_path(temp[0],temp[1], path2)
 #visualize_configuration(robot, obs, (3,3), (8.5,8.5))
 #visualize_rrt(temp[0],temp[1],(3,3), (8.5,8.5), 100)
-visualize_rrt_star(temp[0],temp[1],(3,3), (8.5,8.5), 1000)
+#visualize_rrt_star(temp[0],temp[1],(3,3), (8.5,8.5), 1000)
 

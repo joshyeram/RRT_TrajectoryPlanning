@@ -29,11 +29,12 @@ class Tree:
         self.start = Node(start, 1)
         self.goal = Node(goal, 2)
         self.kd = self.start
-        self.nodes.append(start)
+        self.nodes.append(self.start)
 
     def getNode(self, point):
         if(type(point)==Node):
             point = point.point
+
         for i in self.nodes:
             if(i.point == point):
                 return i
@@ -106,7 +107,7 @@ class Tree:
         return d
 
     def getThetaList(self ,point1, point2):
-        if((point2[2]>0 and point1[2]>0 and point2[2] > point1[2]) or (point2[2]< 0 and point1[2] < 0 and point2[2] > point1[2])):
+        if((point2[2]>=0 and point1[2]>=0 and point2[2] >= point1[2]) or (point2[2]<= 0 and point1[2] <= 0 and point2[2] >= point1[2])):
             diff = np.abs(point2[2] - point1[2])
             thetas = []
             inc = diff / 10
@@ -115,7 +116,7 @@ class Tree:
             thetas.append(point2[2])
             return thetas
 
-        elif(point1[2]>0 and point2[2]<0):
+        elif(point1[2]>=0 and point2[2]<=0):
             thetas = []
             diff = np.abs(np.pi - point1[2])
             inc = diff / 10
@@ -128,7 +129,7 @@ class Tree:
                 thetas.append(- np.pi + inc * i )
             return thetas
 
-        elif(point1[2]<0 and point2[2]>0):
+        elif(point1[2]<=0 and point2[2]>=0):
             thetas = []
             diff = np.abs(point1[2])
             inc = diff / 10
@@ -141,7 +142,7 @@ class Tree:
                 thetas.append(inc * i)
             return thetas
 
-        elif(point2[2]>0 and point1[2]>0 and point2[2] < point1[2]):
+        elif(point2[2]>=0 and point1[2]>=0 and point2[2] < point1[2]):
             thetas = []
             diff = np.pi - point1[2]
             inc = diff / 10
@@ -159,7 +160,7 @@ class Tree:
                 thetas.append(inc * i)
             return thetas
 
-        elif(point2[2]<0 and point1[2]<0 and point2[2] < point1[2]):
+        elif(point2[2]<=0 and point1[2]<=0 and point2[2] < point1[2]):
             thetas = []
             diff = np.abs(point1[2])
             inc = diff / 10
@@ -180,11 +181,19 @@ class Tree:
 
     def extend(self, point1, point2):
         #see if it is clear for rotation
+        tempTheta = point1[2]
         if(point1[2]!=point2[2]):
-            return
+            thetas = self.getThetaList(point1, point2)
 
-        tempTheta = point2[2]
-        self.robot.rotation = point2[2]
+            temp = thetas[0]
+            for i in thetas:
+                self.robot.rotation = i
+                if(isCollisionFree(self.robot, point1, self.obstacles)):
+                    temp = i
+                else:
+                    break
+            self.robot.rotation = temp
+
         pointList = self.getList(point1, point2)
 
         far = None
@@ -196,8 +205,9 @@ class Tree:
                 break
         if(far == None or far==point1):
             return point1
-        self.add(point1,(far[0],far[1],point2[2]))
-        return far
+        self.add(point1,(far[0],far[1], self.robot.rotation))
+
+        return (far[0],far[1], self.robot.rotation)
 
     def get_cost(self, point):
         return self.getNode(point).distanceFromStart
@@ -229,14 +239,15 @@ class Tree:
         return
 
 
+
+"""
 start = (2,2)
 end = (8,8)
 tree = Tree(None, None, start, end)
-print(tree.getThetaList((1,1,-.1), (1,1,-3.1)))
-print(-3.1<-.1)
+print(tree.getThetaList((1,1,-1), (1,1,-2)))
 
 
-"""
+
 for i in range (10):
     samp = (np.random.randint(0,10), np.random.randint(0,10))
     if (tree.getNode(samp) == False):
