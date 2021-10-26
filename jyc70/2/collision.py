@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.path as mplPath
 from file_parse import *
+from robot import *
 
 def between(x,y,number):
     if(x<y):
@@ -28,8 +29,9 @@ def isCollisionFree(robot, point, obstacles):
     #4: check if they are the same shape with the same coords
 
     transpPos = []
-    for i in range(0, len(robot)):
-        transpPos.append((robot[i][0] + point[0], robot[i][1] + point[1]))
+    robotO = robot.transform()
+    for i in range(0, len(robotO)):
+        transpPos.append((robotO[i][0] + point[0], robotO[i][1] + point[1]))
         if (transpPos[i][0] < 0 or transpPos[i][0] > 10):
             return False
         if (transpPos[i][1] < 0 or transpPos[i][1] > 10):
@@ -47,13 +49,14 @@ def isCollisionFree(robot, point, obstacles):
                 robotLine.append(pos[k+1])
                 if(lineToLine(linePoly,robotLine)):
                     return False
+
     allPolyPoints = []
     for i in obstacles:
         for j in range(0, len(i)):
             allPolyPoints.append(i[j])
             if(j == len(i)-1):
-                avgx = (i[0][0]+i[len(i)-1][0])/2
-                avgy = (i[0][1] + i[len(i) - 1][1]) / 2
+                avgx = (i[0][0]+i[-1][0]) / 2
+                avgy = (i[0][1] + i[-1][1]) / 2
             else:
                 avgx = (i[j][0] + i[j+1][0]) / 2
                 avgy = (i[j][1] + i[j+1][1]) / 2
@@ -67,8 +70,8 @@ def isCollisionFree(robot, point, obstacles):
     for i in range(0, len(transpPos)):
         allRobotPoints.append(transpPos[i])
         if (i == len(transpPos) - 1):
-            avgx = (transpPos[0][0] + transpPos[len(transpPos) - 1][0]) / 2
-            avgy = (transpPos[0][1] + transpPos[len(transpPos) - 1][1]) / 2
+            avgx = (transpPos[0][0] + transpPos[-1][0]) / 2
+            avgy = (transpPos[0][1] + transpPos[-1][1]) / 2
         else:
             avgx = (transpPos[i][0] + transpPos[i+1][0]) / 2
             avgy = (transpPos[i][1] + transpPos[i+1][1]) / 2

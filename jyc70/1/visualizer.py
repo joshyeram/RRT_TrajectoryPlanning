@@ -319,6 +319,7 @@ def visualize_rrt(robot, obstacles, start, goal, iter_n):
         if (iter_n % 10 == 0):
             sampled = goal
         if (tree.getNode(sampled) != False):
+            iter_n -= 1
             continue
         near = tree.nearest(sampled)
         actual = tree.extend(near, sampled)
@@ -376,12 +377,12 @@ robot = temp[0]
 obs = temp[1]
 
 #path1 = rrt(temp[0], temp[1], (3,3), (8.5,8.5), 200)
-path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
+#path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
 
-pathAnimate(robot,obs, path2)
+#pathAnimate(robot,obs, path2)
 #print(path)
 #visualize_path(temp[0],temp[1], path2)
 #visualize_configuration(robot, obs, (3,3), (8.5,8.5))
 #visualize_rrt(temp[0],temp[1],(3,3), (8.5,8.5), 100)
-#visualize_rrt_star(temp[0],temp[1],(8.5,8.5),(3,3), 20)
+visualize_rrt_star(temp[0],temp[1],(3,3), (8.5,8.5), 1000)
 
