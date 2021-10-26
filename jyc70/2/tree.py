@@ -184,7 +184,6 @@ class Tree:
         tempTheta = point1[2]
         if(point1[2]!=point2[2]):
             thetas = self.getThetaList(point1, point2)
-
             temp = thetas[0]
             for i in thetas:
                 self.robot.rotation = i

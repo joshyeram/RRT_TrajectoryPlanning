@@ -103,7 +103,10 @@ def visualize_points(points, robot, obstacles, start, goal):
     axis.spines["bottom"].set_linewidth(1.5)
 
     for i in points:
-        plt.plot(i[0],i[1], marker = 'o', color="blue")
+        t = robotTranslated(i, robot)
+        t.append(t[0])
+        xt, yt = zip(*t)
+        plt.fill(xt,yt, color="blue")
 
     plt.xlim(0, 10)
     plt.ylim(0, 10)
@@ -377,10 +380,12 @@ temp = parse_problem("robot_env_01.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
 
-#path1 = rrt(temp[0], temp[1], (3,3), (8.5,8.5), 200)
-path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
+#visualize_points([(2,8),(8,3), (7,6)], robot, obs, temp[2][0][0], temp[2][0][1])
 
-pathAnimate(robot,obs, path2)
+#path1 = rrt(temp[0], temp[1], (3,3), (8.5,8.5), 200)
+#path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
+
+#pathAnimate(robot,obs, path2)
 #print(path)
 #visualize_path(temp[0],temp[1], path2)
 #visualize_configuration(robot, obs, (3,3), (8.5,8.5))

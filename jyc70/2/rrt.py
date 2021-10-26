@@ -29,6 +29,7 @@ def rrt(robot, obstacles, start, goal, iter_n):
         if(iter_n % 10 ==0):
             sampled = goal
         if(tree.getNode(sampled)!=False):
+            iter_n -= 1
             continue
         near = tree.nearest(sampled)
         actual = tree.extend(near, sampled)
@@ -41,7 +42,7 @@ def rrt(robot, obstacles, start, goal, iter_n):
         iter_n-=1
     lastNode = lastResort(tree, robot, obstacles, goal)
     if(lastNode == -1):
-        return (False, start, goal)
+        return False
     attempt = tree.extend(lastNode.point, goal)
     path = getPath(tree, start, goal)
 
@@ -55,6 +56,7 @@ def rrtWithTree(robot, obstacles, start, goal, iter_n):
         if(iter_n % 10 ==0):
             sampled = goal
         if(tree.getNode(sampled)!=False):
+            iter_n -= 1
             continue
         near = tree.nearest(sampled)
         actual = tree.extend(near, sampled)
@@ -77,7 +79,17 @@ def lastResort(tree, robot, obstacles, goal):
     distances = []
     far = None
     added = False
+    initTheta = robot.rotation
     for i in all:
+        thetas = tree.getThetaList(i.point, goal)
+        for k in thetas:
+            robot.rotation = k
+            if (isCollisionFree(robot, i.point, obstacles)==False):
+                robot.rotation = initTheta
+                distances.append(-1)
+                added = True
+                break
+        robot.rotation = goal[2]
         pointList = tree.getList(i.point, goal)
         for j in pointList:
             if(isCollisionFree(robot, j, obstacles) == False):
