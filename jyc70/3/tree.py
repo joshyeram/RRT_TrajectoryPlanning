@@ -217,6 +217,10 @@ class Tree:
                     break
             self.robot.rotation = temp
 
+        if(point1[0]==point2[0] and point1[1]==point2[1]):
+            self.add(point1, point2)
+            return point2
+
         pointList = self.getList(point1, point2)
         temp = []
         for i in pointList:

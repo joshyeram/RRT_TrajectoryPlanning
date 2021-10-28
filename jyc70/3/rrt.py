@@ -55,8 +55,9 @@ def rrtWithTree(robot, obstacles, start, goal):
         sampled = sample()
 
         near = tree.nearest(sampled)
-        if(iter_n%10 ==0):
+        if(iter_n % 2 ==0):
             near = tree.nearest(goal)
+            print(near)
 
         actual = tree.extend(near, 15, 20, 1)
 
@@ -64,7 +65,7 @@ def rrtWithTree(robot, obstacles, start, goal):
         for i in tree.nodes:
             if(tree.distanceEuc(i.point, goal)< tree.distanceEuc(temp.point, goal)):
                 temp = i
-        if(tree.distanceEuc(temp.point, goal)<=.25):
+        if(tree.distanceEuc(temp.point, goal)<=.5):
             attempt = tree.extend1(temp.point, goal)
             if(attempt == goal):
                 path = getPath(tree, start, goal)

@@ -57,8 +57,14 @@ class Robot:
             xdelta = tempKin[0] * dt
             ydelta = tempKin[1] * dt
             thetadelta = tempKin[2] * dt
+            tempDelta = init[2] + thetadelta
+            while(tempDelta>= np.pi or tempDelta<= -np.pi):
+                if(tempDelta>= np.pi):
+                    tempDelta -= 2 * np.pi
+                else:
+                    tempDelta += 2 * np.pi
 
-            deltaState = (init[0]+xdelta ,init[1]+ydelta, init[2]+thetadelta)
+            deltaState = (init[0]+xdelta ,init[1]+ydelta, tempDelta)
 
             init = deltaState
 
