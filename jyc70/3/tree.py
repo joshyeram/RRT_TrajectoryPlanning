@@ -4,6 +4,7 @@ import matplotlib.path as mplPath
 
 from file_parse import *
 from collision import *
+from robot import *
 
 class Node:
 
@@ -15,7 +16,6 @@ class Node:
         self.right = None
         self.left = None
         self.distanceFromStart = 0
-
 
 class Tree:
     robot = None
@@ -189,7 +189,7 @@ class Tree:
             return thetas
 
 
-    def extend(self, point1, point2):
+    def extend1(self, point1, point2):
         #see if it is clear for rotation
         tempTheta = point1[2]
         if(point1[2]!=point2[2]):
@@ -217,7 +217,7 @@ class Tree:
                 break
         if(far == None or far==point1):
             return point1
-        self.add(point1,(far[0],far[1], self.robot.rotation))
+        self.add(point1,(far[0],far[1], self.robot.rotation),self.getList(point1, point2))
 
         return (far[0],far[1], self.robot.rotation)
 
@@ -258,6 +258,29 @@ class Tree:
                 i.distanceFromStart = self.getNode(point).distanceFromStart + self.distance(point, i.point)
         return
 
+    def extend(self, point, n1, n2, dt):
+        dur = np.random.randint(n1, n2)
+        r = Robot(0,0)
+
+        iter = int(dur/dt)
+        controls = []
+
+        for i in range(iter):
+            v = np.random.uniform(-1,1)
+            w = np.random.uniform(-.2, .2) * np.pi
+            controls.append((v,w))
+
+        path = r.propogate(point, controls, dur, dt)
+
+        temp = path[0]
+        pt = point
+        for i in path:
+            if(isCollisionFree(self.robot, i, self.obstacles)):
+                temp = i
+                self.add(pt, i)
+                pt = i
+
+        return temp
 
 
 """
