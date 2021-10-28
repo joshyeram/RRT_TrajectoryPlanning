@@ -23,6 +23,7 @@ def getPath(tree, start, goal):
 def rrt(robot, obstacles, start, goal, iter_n):
     tree = Tree(robot, obstacles, start, goal)
     while(iter_n >=0):
+        print(iter_n)
         sampled = sample()
 
         near = tree.nearest(sampled)
@@ -43,6 +44,7 @@ def rrt(robot, obstacles, start, goal, iter_n):
 def rrtWithTree(robot, obstacles, start, goal, iter_n):
     tree = Tree(robot, obstacles, start, goal)
     while (iter_n >= 0):
+        print(iter_n)
         sampled = sample()
 
         near = tree.nearest(sampled)
@@ -101,5 +103,5 @@ temp = parse_problem("robot_env_02.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
 
-r = rrtWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 100)
+r = rrtWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 5)
 print(r)
