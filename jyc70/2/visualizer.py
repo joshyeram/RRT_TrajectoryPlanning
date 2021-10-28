@@ -197,13 +197,13 @@ temp = parse_problem("robot_env_02.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
 
-r = rrtWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 10000)
-visualize_tree(robot, obs, r)
-pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], r)
+#r = rrtWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 1000)
+#visualize_tree(robot, obs, r)
+#pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], r)
 
-#rstar = rrt_starWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 4000)
-#visualize_tree(robot, obs, rstar)
-#pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], rstar)
+rstar = rrt_starWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 2000)
+visualize_tree(robot, obs, rstar)
+pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], rstar)
 #visualize_problem(robot, obs, temp[2][0][0], temp[2][0][1])
 #visualize_points([(9,1, 0),(3,2,2), (2,8,-.5)],robot, obs, temp[2][0][0], temp[2][0][1])
 

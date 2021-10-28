@@ -9,12 +9,12 @@ from tree import *
 
 def getPath(tree, start, goal):
     endNode = tree.getNode(goal)
+    print(endNode)
     path = []
     while(endNode!=None and endNode!=False):
-        if(endNode.trajectoryToParent == None):
-            path.append(endNode.parent)
-        else:
-            path.extend(endNode.trajectoryToParent)
+        if(endNode.parent==None):
+            break
+        path.append(endNode.point)
         endNode = endNode.parent
     temp = list(reversed(path))
     #print(temp)
@@ -27,10 +27,16 @@ def rrt(robot, obstacles, start, goal, iter_n):
         sampled = sample()
 
         near = tree.nearest(sampled)
-        actual = tree.extend(near, 8, 11, .1)
+        actual = tree.extend(near, 8, 11, 1)
 
-        if(tree.distance(actual, goal)<=.25):
-            attempt = tree.extend(actual, 8, 11, .1)
+        if (iter_n % 10 == 0):
+            near = goal
+
+        if (tree.distanceEuc(actual, goal) <= .25):
+            attempt = tree.extend1(actual, goal)
+            if (attempt == goal):
+                path = getPath(tree, start, goal)
+                return (path, tree)
 
         iter_n-=1
 
@@ -41,26 +47,37 @@ def rrt(robot, obstacles, start, goal, iter_n):
     path = getPath(tree, start, goal)
     return path
 
-def rrtWithTree(robot, obstacles, start, goal, iter_n):
+def rrtWithTree(robot, obstacles, start, goal):
     tree = Tree(robot, obstacles, start, goal)
-    while (iter_n >= 0):
+    iter_n = 0
+    while (True):
         print(iter_n)
         sampled = sample()
 
         near = tree.nearest(sampled)
-        actual = tree.extend(near, 8, 11, .1)
+        if(iter_n%10 ==0):
+            near = tree.nearest(goal)
 
-        if (tree.distance(actual, goal) <= .25):
-            attempt = tree.extend(actual, 8, 11, .1)
+        actual = tree.extend(near, 15, 20, 1)
 
-        iter_n -= 1
+        temp = tree.nodes[0]
+        for i in tree.nodes:
+            if(tree.distanceEuc(i.point, goal)< tree.distanceEuc(temp.point, goal)):
+                temp = i
+        if(tree.distanceEuc(temp.point, goal)<=.25):
+            attempt = tree.extend1(temp.point, goal)
+            if(attempt == goal):
+                path = getPath(tree, start, goal)
+                return (path, tree)
 
+        iter_n += 1
+    """print(len(tree.nodes))
     lastNode = lastResort(tree, robot, obstacles, goal)
     if (lastNode == -1):
         return (None, tree)
     attempt = tree.extend1(lastNode.point, goal)
     path = getPath(tree, start, goal)
-    return (path,tree)
+    return (path,tree)"""
 
 def lastResort(tree, robot, obstacles, goal):
     all = tree.nodes
@@ -98,10 +115,3 @@ def lastResort(tree, robot, obstacles, goal):
         return all[index]
     return -1
 
-
-temp = parse_problem("robot_env_02.txt","probs_01.txt")
-robot = temp[0]
-obs = temp[1]
-
-r = rrtWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 5)
-print(r)

@@ -63,19 +63,20 @@ def visualize_points(points, robot, obstacles, start, goal):
 
 def visualize_path(robot, obstacles, path):
     if(path[0]==None):
-        visualize_problem_notDraw(robot, obstacles, path[1], path[2])
+        visualize_problem_notDraw(robot, obstacles, (-1,-1,0), (-1,-1,0))
         plt.title('No Path Found')
     else:
-        visualize_problem_notDraw(robot, obstacles, path[0], path[-1])
-        drawPath(robot, path)
+        visualize_problem_notDraw(robot, obstacles, path[0], path[0][-1])
+        drawPath(robot, path[0])
         plt.title('Path Found Using RRT')
     plt.show()
 
 def visualize_tree(robot, obstacles, path):
+    print(path[0])
     if(path[0]==None):
-        visualize_problem_notDraw(robot, obstacles, path[1], path[2])
+        visualize_problem_notDraw(robot, obstacles,  (-1,-1,0), (-1,-1,0))
         plt.title('No Path Found')
-        drawTree(robot, path[3])
+        drawTree(robot, path[1])
     else:
         visualize_problem_notDraw(robot, obstacles, path[0][0], path[0][-1])
         plt.title('Path Found Using RRT')
@@ -87,7 +88,7 @@ def drawPath(robot, path):
     for i in range(len(path) - 1):
         x = [path[i][0], path[i + 1][0]]
         y = [path[i][1], path[i + 1][1]]
-        plt.plot(x, y, 'yo', linestyle='solid')
+        plt.plot(x, y, 'yo', linestyle='solid', markersize=1)
     plt.show(block=False)
 
 def drawTree(robot, tree):
@@ -189,16 +190,17 @@ def pathAnimate(robot, obstacles, start, goal, path):
         robotPatch.set_xy(robotP)
         return robotPatch
 
-    ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=20)
+    ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=2)
     plt.show()
 
-temp = parse_problem("robot_env_02.txt","probs_01.txt")
+temp = parse_problem("robot_env_01.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
 
-r = rrtWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 100)
+r = rrtWithTree(robot,obs, temp[2][0][0], temp[2][0][1])
 visualize_tree(robot, obs, r)
-#pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], r)
+#visualize_path(robot, obs, r)
+pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], r)
 
 #rstar = rrt_starWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 4000)
 #visualize_tree(robot, obs, rstar)

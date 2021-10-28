@@ -65,3 +65,4 @@ class Robot:
             final.append(deltaState)
 
         return final
+

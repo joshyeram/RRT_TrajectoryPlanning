@@ -84,12 +84,13 @@ class Tree:
             point2 = point2.point
         x = (point2[0]-point1[0]) ** 2
         y = (point2[1]-point1[1]) ** 2
-        tTemp = point2[2]-point1[2]
-        if(tTemp< -1 * np.pi):
+        tTemp = (point2[2] - point1[2]) % (2 * np.pi)
+        if(tTemp< - np.pi):
             tTemp += 2 * np.pi
-        elif(tTemp >  np.pi):
+        elif(tTemp>np.pi):
             tTemp -= 2 * np.pi
-        t = (point2[2]-point1[2]) ** 2
+
+        t = (tTemp) ** 2
         return np.sqrt(x+y+t)
 
     def distanceEuc(self, point1, point2):
@@ -117,7 +118,20 @@ class Tree:
         return d
 
     def getThetaList(self ,point1, point2):
-        if((point2[2]>=0 and point1[2]>=0 and point2[2] >= point1[2]) or (point2[2]<= 0 and point1[2] <= 0 and point2[2] >= point1[2])):
+        delta = (point2[2] - point1[2]) % (2 * np.pi)
+        if(delta < -np.pi):
+            delta +=np.pi *2
+        elif(delta>np.pi):
+            delta -= 2 * np.pi
+
+        inc = delta/10
+        thetas = []
+        for i in range(11):
+            thetas.append(inc * i + point1[2])
+
+        return thetas
+
+        """if((point2[2]>=0 and point1[2]>=0 and point2[2] >= point1[2]) or (point2[2]<= 0 and point1[2] <= 0 and point2[2] >= point1[2])):
             diff = np.abs(point2[2] - point1[2])
             thetas = []
             inc = diff / 10
@@ -186,7 +200,7 @@ class Tree:
             inc = diff / 10
             for i in range(11):
                 thetas.append(-np.pi + inc * i)
-            return thetas
+            return thetas"""
 
 
     def extend1(self, point1, point2):
@@ -217,7 +231,7 @@ class Tree:
                 break
         if(far == None or far==point1):
             return point1
-        self.add(point1,(far[0],far[1], self.robot.rotation),self.getList(point1, point2))
+        self.add(point1,(far[0],far[1], self.robot.rotation))
 
         return (far[0],far[1], self.robot.rotation)
 
@@ -238,26 +252,6 @@ class Tree:
                 return False
         return True
 
-    def rewire(self, point, r):
-        print("rewired")
-        all = self.nodes
-        neighborhoods = []
-        for i in all:
-            if(self.distance(point, i.point) <= r):
-                neighborhoods.append(i)
-        if(len(neighborhoods)==0):
-            return
-        for i in neighborhoods:
-            if(i.distanceFromStart  > self.getNode(point).distanceFromStart + self.distance(point, i.point) and self.clearALong(point, i.point)):
-                temp = i.parent
-                temp.neighbors.remove(i)
-                i.neighbors.remove(i.parent)
-                i.parent = self.getNode(point)
-                i.neighbors.append(self.getNode(point))
-                self.getNode(point).neighbors.append(i)
-                i.distanceFromStart = self.getNode(point).distanceFromStart + self.distance(point, i.point)
-        return
-
     def extend(self, point, n1, n2, dt):
         dur = np.random.randint(n1, n2)
         r = Robot(0,0)
@@ -266,19 +260,20 @@ class Tree:
         controls = []
 
         for i in range(iter):
-            v = np.random.uniform(-1,1)
-            w = np.random.uniform(-.2, .2) * np.pi
+            v = np.random.uniform(-.5,.5)
+            w = np.random.uniform(-.3, .3) * np.pi
             controls.append((v,w))
 
         path = r.propogate(point, controls, dur, dt)
 
         temp = path[0]
-        pt = point
+
         for i in path:
             if(isCollisionFree(self.robot, i, self.obstacles)):
+                self.add(temp, i)
                 temp = i
-                self.add(pt, i)
-                pt = i
+            else:
+                break
 
         return temp
 
