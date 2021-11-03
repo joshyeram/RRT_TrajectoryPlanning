@@ -71,6 +71,7 @@ def visualize_problem(robot, obstacles, start, goal):
     plt.xlim(0, 10)
     plt.ylim(0, 10)
     plt.gca().set_aspect('equal', adjustable='box')
+    plt.title("Visualize Problem")
     plt.show()
 
 def visualize_points(points, robot, obstacles, start, goal):
@@ -111,9 +112,10 @@ def visualize_points(points, robot, obstacles, start, goal):
     plt.xlim(0, 10)
     plt.ylim(0, 10)
     plt.gca().set_aspect('equal', adjustable='box')
+    plt.title("Visualize Points")
     plt.show()
 
-def visualize_path(robot, obstacles, path):
+def visualize_pathNOT(robot, obstacles, path):
     fig = plt.figure()
     axis = fig.gca()
     axis.spines["top"].set_linewidth(1.5)
@@ -129,7 +131,8 @@ def visualize_path(robot, obstacles, path):
 
     initial = []
     final = []
-    if(path ==False):
+
+    if(path == None):
         plt.title("No Path Found")
         plt.xlim(0, 10)
         plt.ylim(0, 10)
@@ -146,7 +149,7 @@ def visualize_path(robot, obstacles, path):
     xi, yi = zip(*initial)
     xf, yf = zip(*final)
 
-    if (path != False):
+    if (path != None):
         for i in range(len(path) - 1):
             x = [path[i][0], path[i + 1][0]]
             y = [path[i][1], path[i + 1][1]]
@@ -161,7 +164,7 @@ def visualize_path(robot, obstacles, path):
     plt.show()
     return
 
-def pathAnimate(robot, obstacles, path):
+def visualize_path(robot, obstacles, path):
     fig = plt.figure()
     axis = fig.gca()
     axis.spines["top"].set_linewidth(1.5)
@@ -180,7 +183,7 @@ def pathAnimate(robot, obstacles, path):
 
     initial = []
     final = []
-    if (path == False):
+    if (path == None):
         plt.title("No Path Found")
         plt.xlim(0, 10)
         plt.ylim(0, 10)
@@ -218,7 +221,6 @@ def pathAnimate(robot, obstacles, path):
         robotPos = robotTranslated(pathPoints[i],robot)
         robotP = np.array(robotPos)
         robotPatch.set_xy(robotP)
-        print(robotP)
         return robotPatch
 
     ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=20)
@@ -337,13 +339,11 @@ def visualize_rrt(robot, obstacles, start, goal, iter_n):
                 plt.plot(start[0], start[1], marker='o', color="green")
                 plt.plot(goal[0], goal[1], marker='o', color="red")
                 plt.title("RRT in Configuration Space")
-                print(tree.getNode(goal).distanceFromStart)
-                print(path)
                 plt.show()
+                return
         iter_n -= 1
     lastNode = lastResort(tree, robot, obstacles, goal)
     if (lastNode == -1):
-        #drawEntireTree(tree, robot, obstacles, start, goal, False)
         configNotDraw(robot, obstacles, start, goal)
         drawTree(tree, robot, obstacles, start, goal, False)
         plt.plot(start[0], start[1], marker='o', color="green")
@@ -358,10 +358,7 @@ def visualize_rrt(robot, obstacles, start, goal, iter_n):
         drawTree(tree, robot, obstacles, start, goal, path)
         plt.plot(start[0], start[1], marker='o', color="green")
         plt.plot(goal[0], goal[1], marker='o', color="red")
-        #drawEntireTree(tree, robot, obstacles, start, goal, path)
     plt.title("RRT in Configuration Space")
-    print(tree.getNode(goal).distanceFromStart)
-    print(path)
     plt.show()
 
 def visualize_rrt_star(robot, obstacles, start, goal , iter_n):
@@ -370,7 +367,7 @@ def visualize_rrt_star(robot, obstacles, start, goal , iter_n):
     drawTree(temp[0], robot, obstacles, start, goal, temp[1])
     plt.plot(start[0], start[1], marker='o', color="green")
     plt.plot(goal[0], goal[1], marker='o', color="red")
-    if(temp[1]==False):
+    if(temp[1]==None):
         plt.title("No path found with RRT Star in Configuration Space")
     else:
         plt.title("RRT Star in Configuration Space")
@@ -379,16 +376,23 @@ def visualize_rrt_star(robot, obstacles, start, goal , iter_n):
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
+probs = temp[2]
 
-#visualize_points([(2,8),(8,3), (7,6)], robot, obs, temp[2][0][0], temp[2][0][1])
+#print(robot)
+#print(obs)
+#print(probs)
 
-#path1 = rrt(temp[0], temp[1], (3,3), (8.5,8.5), 200)
-path2 = rrt_star(temp[0], temp[1], (8.5,8.5),(3,3), 2000)
+#points = [(5.2,6.7), (9.2,2.3)]
 
-pathAnimate(robot,obs, path2)
-#print(path)
-#visualize_path(temp[0],temp[1], path2)
-#visualize_configuration(robot, obs, (3,3), (8.5,8.5))
-#visualize_rrt(temp[0],temp[1],(3,3), (8.5,8.5), 100)
-visualize_rrt_star(temp[0],temp[1],(3,3), (8.5,8.5), 1000)
+#visualize_problem(robot, obs, probs[0][0],probs[0][1])
+#visualize_points(points,robot, obs, probs[0][0],probs[0][1])
+tempPath = rrt(robot, obs, probs[0][0],probs[0][1],99)
+print(tempPath)
 
+visualize_path(robot, obs, tempPath)
+#visualize_rrt(robot,obs, probs[0][0],probs[0][1], 100)
+
+tempPathStar = rrt_star(robot, obs, probs[0][0],probs[0][1], 100)
+print(tempPathStar)
+
+visualize_rrt_star(robot, obs, probs[0][0],probs[0][1], 1000)

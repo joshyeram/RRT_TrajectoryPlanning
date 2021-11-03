@@ -10,30 +10,24 @@ from tree import *
 def getPath(tree, start, goal):
     endNode = tree.getNode(goal)
     path = []
-    while(endNode!=None and endNode!=False):
+    while (endNode != None):
         path.append(endNode.point)
         endNode = endNode.parent
+    if (len(path) == 0):
+        return None
     temp = list(reversed(path))
-    #print(temp)
-    if(len(path)==0):
-        path.append(False)
-        path.append(start)
-        path.append(goal)
     return temp
 
 def rrt(robot, obstacles, start, goal, iter_n):
     tree = Tree(robot, obstacles, start, goal)
     while(iter_n >=0):
-        #print(iter_n)
         sampled = sample()
-        if(iter_n % 10 ==0):
-            sampled = goal
         if(tree.getNode(sampled)!=False):
             iter_n -= 1
             continue
         near = tree.nearest(sampled)
         actual = tree.extend(near, sampled)
-
+        #print(actual)
         if(tree.distance(actual, goal)<=.25):
             attempt = tree.extend(actual, goal)
             if(attempt == goal):
@@ -52,8 +46,6 @@ def rrtWithTree(robot, obstacles, start, goal, iter_n):
     while(iter_n >=0):
         #print(iter_n)
         sampled = sample()
-        if(iter_n % 10 ==0):
-            sampled = goal
         if(tree.getNode(sampled)!=False):
             iter_n -= 1
             continue

@@ -9,43 +9,40 @@ from tree import *
 
 def getPath(tree, start, goal):
     endNode = tree.getNode(goal)
-    print(endNode)
     path = []
-    while(endNode!=None and endNode!=False):
-        if(endNode.parent==None):
-            break
+    while (endNode != None):
         path.append(endNode.point)
         endNode = endNode.parent
+    if (len(path) == 0):
+        return None
     temp = list(reversed(path))
-    #print(temp)
     return temp
 
 def rrt(robot, obstacles, start, goal, iter_n):
     tree = Tree(robot, obstacles, start, goal)
-    while(iter_n >=0):
-        print(iter_n)
+    while (iter_n > 0):
         sampled = sample()
-
         near = tree.nearest(sampled)
-        actual = tree.extend(near, 8, 11, 1)
 
-        if (iter_n % 10 == 0):
-            near = goal
+        if (iter_n % 8 == 0):
+            near = tree.nearest(goal)
 
-        if (tree.distanceEuc(actual, goal) <= .25):
-            attempt = tree.extend1(actual, goal)
+        actual = tree.extend(near, 15, 20, .1)
+
+        temp = tree.nodes[0]
+
+        for i in tree.nodes:
+            if (tree.distanceEuc(i.point, goal) < tree.distanceEuc(temp.point, goal)):
+                temp = i
+
+        if (tree.distanceEuc(temp.point, goal) <= .1):
+            attempt = tree.extend1(temp.point, goal)
             if (attempt == goal):
                 path = getPath(tree, start, goal)
-                return (path, tree)
+                return path
 
-        iter_n-=1
-
-    lastNode = lastResort(tree, robot, obstacles, goal)
-    if(lastNode == -1):
-        return None
-    attempt = tree.extend1(lastNode.point, goal)
-    path = getPath(tree, start, goal)
-    return path
+        iter_n -= 1
+    return None
 
 def rrtWithTree(robot, obstacles, start, goal):
     tree = Tree(robot, obstacles, start, goal)

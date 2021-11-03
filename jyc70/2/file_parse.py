@@ -11,7 +11,6 @@ def parse_problem(world_file, problem_file):
         return
     if (len(worldCoords) == 1):
         print("no obstacles found")
-        return
     if (len(problem) == 0):
         print("no problems found")
         return

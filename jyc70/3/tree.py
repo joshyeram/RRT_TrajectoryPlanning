@@ -68,15 +68,6 @@ class Tree:
                 temp = i
         return temp.point
 
-    def nearest_star(self, point, r):
-        if(len(self.nodes)==1):
-            return self.start.point
-        temp = self.nodes[0]
-        for i in self.nodes:
-            if(self.distanceEuc(point,temp.point)>self.distanceEuc(point,i.point)):
-                temp = i
-        return temp.point
-
     def distance(self, point1, point2):
         if(type(point1)==Node):
             point1 = point1.point
@@ -84,13 +75,13 @@ class Tree:
             point2 = point2.point
         x = (point2[0]-point1[0]) ** 2
         y = (point2[1]-point1[1]) ** 2
-        tTemp = (point2[2] - point1[2]) % (2 * np.pi)
-        if(tTemp< - np.pi):
+        tTemp = (point2[2] - point1[2] + np.pi) % (2 * np.pi) - np.pi
+        if (tTemp < -1 * np.pi):
             tTemp += 2 * np.pi
-        elif(tTemp>np.pi):
+        elif (tTemp > np.pi):
             tTemp -= 2 * np.pi
-
         t = (tTemp) ** 2
+
         return np.sqrt(x+y+t)
 
     def distanceEuc(self, point1, point2):
@@ -124,84 +115,12 @@ class Tree:
         elif(delta>np.pi):
             delta -= 2 * np.pi
 
-        inc = delta/10
+        inc = delta/100
         thetas = []
-        for i in range(11):
+        for i in range(101):
             thetas.append(inc * i + point1[2])
 
         return thetas
-
-        """if((point2[2]>=0 and point1[2]>=0 and point2[2] >= point1[2]) or (point2[2]<= 0 and point1[2] <= 0 and point2[2] >= point1[2])):
-            diff = np.abs(point2[2] - point1[2])
-            thetas = []
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i + point1[2])
-            thetas.append(point2[2])
-            return thetas
-
-        elif(point1[2]>=0 and point2[2]<=0):
-            thetas = []
-            diff = np.abs(np.pi - point1[2])
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i + point1[2])
-
-            diff = np.pi - np.abs(point2[2])
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(- np.pi + inc * i )
-            return thetas
-
-        elif(point1[2]<=0 and point2[2]>=0):
-            thetas = []
-            diff = np.abs(point1[2])
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i + point1[2])
-
-            diff = point2[2]
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i)
-            return thetas
-
-        elif(point2[2]>=0 and point1[2]>=0 and point2[2] <= point1[2]):
-            thetas = []
-            diff = np.pi - point1[2]
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i + point1[2])
-
-            diff = np.pi
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(-np.pi + inc * i)
-
-            diff = point2[2]
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i)
-            return thetas
-
-        elif(point2[2]<=0 and point1[2]<=0 and point2[2] <= point1[2]):
-            thetas = []
-            diff = np.abs(point1[2])
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i + point1[2])
-
-            diff = np.pi
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(inc * i)
-
-            diff = np.abs(np.pi + point2[2])
-            inc = diff / 10
-            for i in range(11):
-                thetas.append(-np.pi + inc * i)
-            return thetas"""
-
 
     def extend1(self, point1, point2):
         #see if it is clear for rotation
@@ -264,15 +183,19 @@ class Tree:
         controls = []
 
         for i in range(iter):
-            v = np.random.uniform(-.5,.5)
-            w = np.random.uniform(-.3, .3) * np.pi
+            v = np.random.uniform(-.05 , 2)
+            w = np.random.uniform(-.4, .4) * np.pi
             controls.append((v,w))
 
         path = r.propogate(point, controls, dur, dt)
 
         temp = path[0]
 
+        set = True
         for i in path:
+            if(set == True):
+                set = False
+                continue
             if(isCollisionFree(self.robot, i, self.obstacles)):
                 self.add(temp, i)
                 temp = i
@@ -280,44 +203,4 @@ class Tree:
                 break
 
         return temp
-
-
-"""
-start = (2,2)
-end = (8,8)
-tree = Tree(None, None, start, end)
-print(tree.getThetaList((1,1,-1), (1,1,-2)))
-
-
-
-for i in range (10):
-    samp = (np.random.randint(0,10), np.random.randint(0,10))
-    if (tree.getNode(samp) == False):
-        tree.insertkd(Node(samp, -1))
-        print(samp)
-
-
-while(True):
-    x = input()
-    y = input()
-    if(y =="l" or y =="r"):
-        temp = x.split()
-        x=(int(temp[0]),int(temp[1]))
-        if(y=="l"):
-            try:
-                print(tree.getNode(x).left.point)
-            except:
-                print("not found")
-        else:
-            try:
-                print(tree.getNode(x).right.point)
-            except:
-                print("not found")
-    else:
-        try:
-            point = (float(x), float(y))
-            print("for xy nearest: " + str(point) + "is" + str(tree.nearest(point)))
-        except:
-            print("error")"""
-
 

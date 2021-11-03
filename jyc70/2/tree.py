@@ -48,7 +48,7 @@ class Tree:
         node1.neighbors.append(node2)
         node2.neighbors.append(node1)
         node2.parent = node1
-        node2.distanceFromStart = node1.distanceFromStart + self.distance(point1, point2)
+        node2.distanceFromStart = node1.distanceFromStart + self.distanceEuc(point1, point2)
         self.nodes.append(node2)
 
     def exists(self, point):
@@ -57,7 +57,7 @@ class Tree:
         return True
 
     def parent(self, point):
-        return self.getNode(point).parent
+        return self.getNode(point).parent.point
 
     def nearest(self, point):
         if(len(self.nodes)==1):
@@ -84,12 +84,13 @@ class Tree:
             point2 = point2.point
         x = (point2[0]-point1[0]) ** 2
         y = (point2[1]-point1[1]) ** 2
-        tTemp = point2[2]-point1[2]
+
+        tTemp = (point2[2]-point1[2] + np.pi) % (2*np.pi) - np.pi
         if(tTemp< -1 * np.pi):
             tTemp += 2 * np.pi
         elif(tTemp >  np.pi):
             tTemp -= 2 * np.pi
-        t = (point2[2]-point1[2]) ** 2
+        t = (tTemp) ** 2
         return np.sqrt(x+y+t)
 
     def distanceEuc(self, point1, point2):
@@ -239,63 +240,22 @@ class Tree:
         return True
 
     def rewire(self, point, r):
-        print("rewired")
         all = self.nodes
         neighborhoods = []
         for i in all:
-            if(self.distance(point, i.point) <= r):
+            if(self.distanceEuc(point, i.point) <= r):
                 neighborhoods.append(i)
         if(len(neighborhoods)==0):
             return
+        dis = self.getNode(point).distanceFromStart
         for i in neighborhoods:
-            if(i.distanceFromStart  > self.getNode(point).distanceFromStart + self.distance(point, i.point) and self.clearALong(point, i.point)):
+            if(i.distanceFromStart  > dis + self.distance(point, i.point) and self.clearALong(point, i.point)):
                 temp = i.parent
                 temp.neighbors.remove(i)
                 i.neighbors.remove(i.parent)
                 i.parent = self.getNode(point)
                 i.neighbors.append(self.getNode(point))
                 self.getNode(point).neighbors.append(i)
-                i.distanceFromStart = self.getNode(point).distanceFromStart + self.distance(point, i.point)
+                i.distanceFromStart = dis + self.distanceEuc(point, i.point)
         return
-
-
-
-"""
-start = (2,2)
-end = (8,8)
-tree = Tree(None, None, start, end)
-print(tree.getThetaList((1,1,-1), (1,1,-2)))
-
-
-
-for i in range (10):
-    samp = (np.random.randint(0,10), np.random.randint(0,10))
-    if (tree.getNode(samp) == False):
-        tree.insertkd(Node(samp, -1))
-        print(samp)
-
-
-while(True):
-    x = input()
-    y = input()
-    if(y =="l" or y =="r"):
-        temp = x.split()
-        x=(int(temp[0]),int(temp[1]))
-        if(y=="l"):
-            try:
-                print(tree.getNode(x).left.point)
-            except:
-                print("not found")
-        else:
-            try:
-                print(tree.getNode(x).right.point)
-            except:
-                print("not found")
-    else:
-        try:
-            point = (float(x), float(y))
-            print("for xy nearest: " + str(point) + "is" + str(tree.nearest(point)))
-        except:
-            print("error")"""
-
 

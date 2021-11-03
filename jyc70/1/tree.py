@@ -65,7 +65,7 @@ class Tree:
         return True
 
     def parent(self, point):
-        return self.getNode(point).parent
+        return self.getNode(point).parent.point
 
     def insertkd(self, node):
         ptr = self.kd
@@ -127,29 +127,6 @@ class Tree:
         if(trueNear==None):
             trueNear = self.getNode(self.nearest(point))
         return trueNear
-
-    def nearestBrute(self, point):
-        all = self.getAll()
-        temp = []
-        for i in all:
-            temp.append(self.distance(point, i.point))
-        return all[temp.index(min(temp))].point
-
-    def nearestBad(self, point):
-        ptr = self.kd
-        level = 0  # if level even = compare horizontal. If level odd = compare vertically
-        temp = []
-        while (ptr != None):
-            temp.append(ptr)
-            if ((level % 2 == 0 and point[0] < ptr.point[0]) or (level % 2 == 1 and point[1] < ptr.point[1])):
-                ptr = ptr.left
-            else:
-                ptr = ptr.right
-            level += 1
-        d = []
-        for i in temp:
-            d.append(self.distance(point, i.point))
-        return temp[d.index(min(d))].point
 
     def distance(self, point1, point2):
         if(type(point1)==Node):
@@ -232,38 +209,3 @@ class Tree:
                 self.getNode(point).neighbors.append(i)
                 i.distanceFromStart = self.getNode(point).distanceFromStart + self.distance(point, i.point)
         return
-"""start = (2,2)
-end = (8,8)
-tree = Tree(None, None, start, end)
-
-for i in range (10):
-    samp = (np.random.randint(0,10), np.random.randint(0,10))
-    if (tree.getNode(samp) == False):
-        tree.insertkd(Node(samp, -1))
-        print(samp)
-
-
-while(True):
-    x = input()
-    y = input()
-    if(y =="l" or y =="r"):
-        temp = x.split()
-        x=(int(temp[0]),int(temp[1]))
-        if(y=="l"):
-            try:
-                print(tree.getNode(x).left.point)
-            except:
-                print("not found")
-        else:
-            try:
-                print(tree.getNode(x).right.point)
-            except:
-                print("not found")
-    else:
-        try:
-            point = (float(x), float(y))
-            print("for xy nearest: " + str(point) + "is" + str(tree.nearest(point)))
-        except:
-            print("error")"""
-
-

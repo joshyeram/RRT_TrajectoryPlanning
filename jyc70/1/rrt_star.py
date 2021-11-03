@@ -13,30 +13,27 @@ def getPath(tree, start, goal):
     while(endNode!=None):
         path.append(endNode.point)
         endNode = endNode.parent
-    temp = list(reversed(path))
-    #print(temp)
     if(len(path)==0):
-        path.append(False)
-        path.append(start)
-        path.append(goal)
+        return None
+    temp = list(reversed(path))
     return temp
 
 def rrt_star_vis(robot, obstacles, start, goal, iter_n,):
     tree = Tree(robot, obstacles, start, goal)
     while (iter_n >= 0):
-        print(iter_n)
         sampled = sample()
         if (iter_n % 10 == 0):
             sampled = goal
         if (tree.getNode(sampled) != False):
             iter_n -= 1
             continue
+        r = 1
         #gets nearest node in consideration of the distance from the start
-        near = tree.nearest_star(sampled, 1)
+        near = tree.nearest_star(sampled, r)
         #connects to nearest node
         actual = tree.extend(near, sampled)
         #rewire actual node around r
-        tree.rewire(actual, r=1)
+        tree.rewire(actual, r)
 
         if (tree.getNode(goal)==False and tree.distance(actual, goal) <= .25):
             attempt = tree.extend(actual, goal)
@@ -48,15 +45,14 @@ def rrt_star_vis(robot, obstacles, start, goal, iter_n,):
 
     lastNode = lastResort(tree, robot, obstacles, goal)
     if (lastNode == -1):
-        return tree,False
+        return tree, None
     attempt = tree.extend(lastNode.point, goal)
     path = getPath(tree, start, goal)
-    return tree,path
+    return tree, path
 
 def rrt_star(robot, obstacles, start, goal, iter_n,):
     tree = Tree(robot, obstacles, start, goal)
     while (iter_n >= 0):
-        print(iter_n)
         sampled = sample()
         if (iter_n % 10 == 0):
             sampled = goal
@@ -80,7 +76,7 @@ def rrt_star(robot, obstacles, start, goal, iter_n,):
 
     lastNode = lastResort(tree, robot, obstacles, goal)
     if (lastNode == -1):
-        return False
+        return None
     attempt = tree.extend(lastNode.point, goal)
     path = getPath(tree, start, goal)
     return path

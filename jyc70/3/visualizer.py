@@ -61,7 +61,7 @@ def visualize_points(points, robot, obstacles, start, goal):
         plt.fill(x, y, color="blue")
     plt.show()
 
-def visualize_path(robot, obstacles, path):
+def visualize_path1(robot, obstacles, path):
     if(path[0]==None):
         visualize_problem_notDraw(robot, obstacles, (-1,-1,0), (-1,-1,0))
         plt.title('No Path Found')
@@ -110,10 +110,7 @@ def pointsAlongLines(point1, point2):
     y = (point2[1] - point1[1]) ** 2
     d = np.sqrt(x+y)
     d = int(d) + 1
-    if(d<2):
-        inc = d * 10
-    else:
-        inc = d * 25
+    inc = d * 5
     xinc = float(point2[0] - point1[0]) / inc
     yinc = float(point2[1] - point1[1]) / inc
     for i in range(0, inc + 1):
@@ -122,7 +119,7 @@ def pointsAlongLines(point1, point2):
         points.append((float("%.2f" % xTemp), float("%.2f" % yTemp), point2[2]))
     return points
 
-def pathAnimate(robot, obstacles, start, goal, path):
+def visualize_trajectory(robot, obstacles, start, goal, trajectory):
     fig = plt.figure()
     axis = fig.gca()
     axis.spines["top"].set_linewidth(1.5)
@@ -139,7 +136,7 @@ def pathAnimate(robot, obstacles, start, goal, path):
         x, y = zip(*temp)
         plt.fill(x, y, color="black")
 
-    if (path[0] == None):
+    if (trajectory == None):
         plt.title("No Path Found")
         plt.xlim(0, 10)
         plt.ylim(0, 10)
@@ -164,17 +161,17 @@ def pathAnimate(robot, obstacles, start, goal, path):
     plt.fill(xi, yi, color="green")
     plt.fill(xf, yf, color="red")
 
-    drawPath(robot,path[0])
+    drawPath(robot,trajectory)
 
-    print(path[0])
+    tree = Tree(None, None, None, None)
+
 
     pathPoints = []
-    for i in range(len(path[0])-1):
-        coll = []
-        thetas = path[1].getThetaList(path[0][i], path[0][i+1])
-        for j in thetas:
-            pathPoints.append((path[0][i][0],path[0][i][1],j))
-        pathPoints.extend(pointsAlongLines(path[0][i],path[0][i+1]))
+    for i in range(len(trajectory)-1):
+        pathPoints.extend(pointsAlongLines(trajectory[i],trajectory[i+1]))
+    thetas = tree.getThetaList(pathPoints[-1], goal)
+    print(thetas)
+    pathPoints.extend(thetas)
     pathPoints.append(goal)
 
     plt.title("Animated Path in Planning Scene")
@@ -190,21 +187,16 @@ def pathAnimate(robot, obstacles, start, goal, path):
         robotPatch.set_xy(robotP)
         return robotPatch
 
-    ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=2)
+    ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=.01)
     plt.show()
 
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
+probs = temp[2]
 
-r = rrtWithTree(robot,obs, temp[2][0][0], temp[2][0][1])
-visualize_tree(robot, obs, r)
-#visualize_path(robot, obs, r)
-pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], r)
+path = rrt(robot, obs, probs[0][0], probs[0][1], 2000)
+print(path)
 
-#rstar = rrt_starWithTree(robot,obs,temp[2][0][0], temp[2][0][1], 4000)
-#visualize_tree(robot, obs, rstar)
-#pathAnimate(robot,obs, temp[2][0][0], temp[2][0][1], rstar)
-#visualize_problem(robot, obs, temp[2][0][0], temp[2][0][1])
-#visualize_points([(9,1, 0),(3,2,2), (2,8,-.5)],robot, obs, temp[2][0][0], temp[2][0][1])
+visualize_trajectory(robot, obs, probs[0][0], probs[0][1], path)
 

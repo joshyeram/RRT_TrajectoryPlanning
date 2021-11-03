@@ -18,7 +18,7 @@ def drawTree(tree, robot, obstacles, start, goal, path):
             plt.plot(x, y, 'bo', linestyle='solid')
         draw.pop(0)
 
-    if (path != False):
+    if (path != None):
         for i in range(len(path) - 1):
             x = [path[i][0], path[i + 1][0]]
             y = [path[i][1], path[i + 1][1]]
@@ -86,22 +86,18 @@ def getPath(tree, start, goal):
     while(endNode!=None):
         path.append(endNode.point)
         endNode = endNode.parent
-    temp = list(reversed(path))
-    #print(temp)
     if(len(path)==0):
-        path.append(False)
-        path.append(start)
-        path.append(goal)
+        return None
+    temp = list(reversed(path))
     return temp
 
 def rrt(robot, obstacles, start, goal, iter_n):
     tree = Tree(robot, obstacles, start, goal)
-    path = []
     while(iter_n >=0):
         #print(iter_n)
         sampled = sample()
-        if(iter_n % 10 ==0):
-            sampled = goal
+        """if(iter_n % 10 ==0):
+            sampled = goal"""
         if(tree.getNode(sampled)!=False):
             continue
         near = tree.nearest(sampled)
@@ -110,16 +106,13 @@ def rrt(robot, obstacles, start, goal, iter_n):
             attempt = tree.extend(actual, goal)
             if(attempt == goal):
                 path = getPath(tree, start, goal)
-                #drawEntireTree(tree, robot, obstacles, start, goal, path)
                 return path
         iter_n-=1
     lastNode = lastResort(tree, robot, obstacles,goal)
     if(lastNode == -1):
-        #drawEntireTree(tree, robot, obstacles, start, goal, path)
-        return False
+        return None
     attempt = tree.extend(lastNode.point, goal)
     path = getPath(tree, start, goal)
-    #drawEntireTree(tree, robot, obstacles, start, goal, path)
     return path
 
 def lastResort(tree, robot, obstacles, goal):
