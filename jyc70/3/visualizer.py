@@ -170,8 +170,8 @@ def visualize_trajectory(robot, obstacles, start, goal, trajectory):
     for i in range(len(trajectory)-1):
         pathPoints.extend(pointsAlongLines(trajectory[i],trajectory[i+1]))
     thetas = tree.getThetaList(pathPoints[-1], goal)
-    print(thetas)
-    pathPoints.extend(thetas)
+    for i in thetas:
+        pathPoints.append((goal[0],goal[1],i))
     pathPoints.append(goal)
 
     plt.title("Animated Path in Planning Scene")
