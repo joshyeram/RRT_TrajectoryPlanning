@@ -96,8 +96,8 @@ def rrt(robot, obstacles, start, goal, iter_n):
     while(iter_n >=0):
         #print(iter_n)
         sampled = sample()
-        """if(iter_n % 10 ==0):
-            sampled = goal"""
+        if(iter_n % 10 ==0):
+            sampled = goal
         if(tree.getNode(sampled)!=False):
             continue
         near = tree.nearest(sampled)
