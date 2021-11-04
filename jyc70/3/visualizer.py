@@ -188,6 +188,9 @@ def visualize_trajectory(robot, obstacles, start, goal, trajectory):
         return robotPatch
 
     ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=1)
+    """plt.rcParams['animation.ffmpeg_path'] = 'C:/Users/josh/Desktop/ff/bin/ffmpeg'
+    writer = animation.FFMpegWriter(fps=60)
+    ani.save('try.mp4', writer=writer)"""
     plt.show()
 
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
