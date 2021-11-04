@@ -23,7 +23,6 @@ def rrt(robot, obstacles, start, goal, iter_n):
     while (iter_n > 0):
         sampled = sample()
         near = tree.nearest(sampled)
-
         if (iter_n % 8 == 0):
             near = tree.nearest(goal)
 

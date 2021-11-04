@@ -161,7 +161,7 @@ def visualize_trajectory(robot, obstacles, start, goal, trajectory):
     plt.fill(xi, yi, color="green")
     plt.fill(xf, yf, color="red")
 
-    drawPath(robot,trajectory)
+    drawPath(robot, trajectory)
 
     tree = Tree(None, None, None, None)
 
@@ -187,7 +187,7 @@ def visualize_trajectory(robot, obstacles, start, goal, trajectory):
         robotPatch.set_xy(robotP)
         return robotPatch
 
-    ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=.01)
+    ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=1)
     plt.show()
 
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
@@ -197,6 +197,5 @@ probs = temp[2]
 
 path = rrt(robot, obs, probs[0][0], probs[0][1], 2000)
 print(path)
-
 visualize_trajectory(robot, obs, probs[0][0], probs[0][1], path)
 
