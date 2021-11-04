@@ -169,6 +169,7 @@ def visualize_trajectory(robot, obstacles, start, goal, trajectory):
     pathPoints = []
     for i in range(len(trajectory)-1):
         pathPoints.extend(pointsAlongLines(trajectory[i],trajectory[i+1]))
+    pathPoints[len(pathPoints)-1][2] = pathPoints[len(pathPoints)-2][2]
     thetas = tree.getThetaList(pathPoints[-1], goal)
     for i in thetas:
         pathPoints.append((goal[0],goal[1],i))

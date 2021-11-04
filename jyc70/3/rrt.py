@@ -34,7 +34,7 @@ def rrt(robot, obstacles, start, goal, iter_n):
             if (tree.distanceEuc(i.point, goal) < tree.distanceEuc(temp.point, goal)):
                 temp = i
 
-        if (tree.distanceEuc(temp.point, goal) <= .1):
+        if (tree.distanceEuc(temp.point, goal) <= .25):
             attempt = tree.extend1(temp.point, goal)
             if (attempt == goal):
                 path = getPath(tree, start, goal)
