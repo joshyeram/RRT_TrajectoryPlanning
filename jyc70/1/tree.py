@@ -65,6 +65,8 @@ class Tree:
         return True
 
     def parent(self, point):
+        if(self.exists(point) == False):
+            return None
         return self.getNode(point).parent.point
 
     def insertkd(self, node):
@@ -96,7 +98,6 @@ class Tree:
     def nearestOpt(self, head, pointC, level): #root node, point point, depth
         if(head == None):
             return None
-
         splitPoint = level % 2
 
         if(pointC[splitPoint] < head.point[splitPoint]):

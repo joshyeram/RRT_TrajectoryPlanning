@@ -57,6 +57,8 @@ class Tree:
         return True
 
     def parent(self, point):
+        if (self.exists(point) == False):
+            return None
         return self.getNode(point).parent
 
     def nearest(self, point):
