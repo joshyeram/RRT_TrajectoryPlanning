@@ -115,9 +115,9 @@ class Tree:
         elif(delta>np.pi):
             delta -= 2 * np.pi
 
-        inc = delta/100
+        inc = delta/50
         thetas = []
-        for i in range(101):
+        for i in range(51):
             thetas.append(inc * i + point1[2])
 
         return thetas

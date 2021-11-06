@@ -110,7 +110,7 @@ def pointsAlongLines(point1, point2):
     y = (point2[1] - point1[1]) ** 2
     d = np.sqrt(x+y)
     d = int(d) + 1
-    inc = d * 5
+    inc = d * 50
     xinc = float(point2[0] - point1[0]) / inc
     yinc = float(point2[1] - point1[1]) / inc
     for i in range(0, inc + 1):
@@ -167,11 +167,14 @@ def visualize_trajectory(robot, obstacles, start, goal, trajectory):
 
 
     pathPoints = []
-    for i in range(len(trajectory)-2):
+    for i in range(len(trajectory)-1):
+        thetas = tree.getThetaList(trajectory[i], trajectory[i+1])
+        for j in thetas:
+            pathPoints.append((trajectory[i][0], trajectory[i][1], j))
         pathPoints.extend(pointsAlongLines(trajectory[i],trajectory[i+1]))
-    thetas = tree.getThetaList(pathPoints[-1], goal)
+    """thetas = tree.getThetaList(pathPoints[-1], goal)
     for i in thetas:
-        pathPoints.append((goal[0],goal[1],i))
+        pathPoints.append((goal[0],goal[1],i))"""
     pathPoints.append(goal)
 
     plt.title("Animated Path in Planning Scene")
