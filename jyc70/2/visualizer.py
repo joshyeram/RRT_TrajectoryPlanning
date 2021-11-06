@@ -184,6 +184,7 @@ def visualize_path(robot, obstacles, path):
         return robotPatch
 
     ani = animation.FuncAnimation(fig, animate, frames=len(pathPoints), repeat=False, interval=20)
+
     plt.show()
 
 temp = parse_problem("robot_env_01.txt","probs_01.txt")
@@ -200,8 +201,8 @@ points = [(5,5,3),(2,8,-1),(9,1,.5)]
 #tempPath = rrt(robot, obs, probs[0][0], probs[0][1], 100)
 #print(tempPath)
 
-#tm = rrt_star(robot, obs, probs[0][0], probs[0][1], 2000)
+tm = rrt_star(robot, obs, probs[0][0], probs[0][1], 2000)
 #print(tm)
 
 #visualize_path(robot,obs,tempPath)
-#visualize_path(robot,obs,tm)
+visualize_path(robot,obs,tm)
