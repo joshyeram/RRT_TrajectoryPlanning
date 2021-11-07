@@ -187,7 +187,7 @@ def visualize_path(robot, obstacles, path):
 
     plt.show()
 
-temp = parse_problem("robot_env_01.txt","probs_01.txt")
+"""temp = parse_problem("robot_env_01.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
 probs = temp[2]
@@ -195,14 +195,14 @@ probs = temp[2]
 points = [(5,5,3),(2,8,-1),(9,1,.5)]
 
 
-#visualize_problem(robot, obs, probs[0][0], probs[0][1])
-#visualize_points(points,robot, obs, probs[0][0], probs[0][1])
+visualize_problem(robot, obs, probs[0][0], probs[0][1])
+visualize_points(points,robot, obs, probs[0][0], probs[0][1])
 
-#tempPath = rrt(robot, obs, probs[0][0], probs[0][1], 100)
+tempPath = rrt(robot, obs, probs[0][0], probs[0][1], 500)
 #print(tempPath)
 
-tm = rrt_star(robot, obs, probs[0][0], probs[0][1], 2000)
+tm = rrt_star(robot, obs, probs[0][0], probs[0][1], 100)
 #print(tm)
 
-#visualize_path(robot,obs,tempPath)
-visualize_path(robot,obs,tm)
+visualize_path(robot,obs,tempPath)
+visualize_path(robot,obs,tm)"""

@@ -38,8 +38,12 @@ def rrt(robot, obstacles, start, goal, iter_n):
             attempt = tree.extend1(temp.point, goal)
             if (attempt == goal):
                 path = getPath(tree, start, goal)
+                for i in range(len(path)):
+                    while(path[i][2] > np.pi):
+                        path[i] = (path[i][0], path[i][1], path[i][2] - 2 * np.pi)
+                    while (path[i][2] < -np.pi):
+                        path[i] = (path[i][0], path[i][1], path[i][2]+ 2 * np.pi)
                 return path
-
         iter_n -= 1
     return None
 

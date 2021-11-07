@@ -110,7 +110,7 @@ def pointsAlongLines(point1, point2):
     y = (point2[1] - point1[1]) ** 2
     d = np.sqrt(x+y)
     d = int(d) + 1
-    inc = d * 50
+    inc = d * 25
     xinc = float(point2[0] - point1[0]) / inc
     yinc = float(point2[1] - point1[1]) / inc
     for i in range(0, inc + 1):
@@ -196,12 +196,11 @@ def visualize_trajectory(robot, obstacles, start, goal, trajectory):
     ani.save('try.mp4', writer=writer)"""
     plt.show()
 
-temp = parse_problem("robot_env_01.txt","probs_01.txt")
+"""temp = parse_problem("robot_env_01.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
 probs = temp[2]
 
-path = rrt(robot, obs, probs[0][0], probs[0][1], 2000)
-print(path)
-visualize_trajectory(robot, obs, probs[0][0], probs[0][1], path)
+path = rrt(robot, obs, probs[0][0], probs[0][1], 2000)  
+visualize_trajectory(robot, obs, probs[0][0], probs[0][1], path)"""
 

@@ -373,7 +373,7 @@ def visualize_rrt_star(robot, obstacles, start, goal , iter_n):
         plt.title("RRT Star in Configuration Space")
     plt.show()
 
-temp = parse_problem("robot_env_01.txt","probs_01.txt")
+"""temp = parse_problem("robot_env_01.txt","probs_01.txt")
 robot = temp[0]
 obs = temp[1]
 probs = temp[2]
@@ -381,19 +381,19 @@ probs = temp[2]
 #print(robot)
 #print(obs)
 #print(probs)
-#points = [(5.2,6.7), (9.2,2.3)]
+points = [(5.2,6.7), (9.2,2.3)]
 
-#visualize_problem(robot, obs, probs[0][0],probs[0][1])
-#visualize_points(points,robot, obs, probs[0][0],probs[0][1])
-#visualize_configuration(robot, obs,probs[0][0],probs[0][1])
-#tempPath = rrt(robot, obs, probs[0][0],probs[0][1],99)
+visualize_problem(robot, obs, probs[0][0],probs[0][1])
+visualize_points(points,robot, obs, probs[0][0],probs[0][1])
+visualize_configuration(robot, obs,probs[0][0],probs[0][1])
+tempPath = rrt(robot, obs, probs[0][0],probs[0][1],99)
 #print(tempPath)
 
-#visualize_path(robot, obs, tempPath)
-#visualize_rrt(robot,obs, probs[0][0],probs[0][1], 100)
+visualize_path(robot, obs, tempPath)
+visualize_rrt(robot,obs, probs[0][0],probs[0][1], 100)
 
-#tempPathStar = rrt_star(robot, obs, probs[0][0],probs[0][1], 1000)
+tempPathStar = rrt_star(robot, obs, probs[0][0],probs[0][1], 1000)
 #print(tempPathStar)
-#visualize_path(robot, obs, tempPathStar)
+visualize_path(robot, obs, tempPathStar)
 
-#visualize_rrt_star(robot, obs, probs[0][0],probs[0][1], 2000)
+visualize_rrt_star(robot, obs, probs[0][0],probs[0][1], 2000)"""
