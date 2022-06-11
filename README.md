@@ -1,6 +1,6 @@
 # RRT, RRT*, and Trajectory Planning 
 
-## RRT ##
+## RRT and RRT* ##
 For the implementation of a polygonal robot in polygonal environment, all of robot and obstacle points were represented in a list of tuple such as [(0,0),(1,1),(1,0)]. In parse problem(world file, problem file), the function will first open and read individual lines from a text file and then read pairs of numbers to form a list of tuples. After interpreting the file, it will return a (robot, obstacles, problems) tuple to be used later.
 
 For collision detection between the robot and the obstacle environment, it will check 4 different conditions.
@@ -54,3 +54,15 @@ In order to optimize rrt, we can continous sample for a set iteration instead, c
 As the number of iterations grows, the path becomes more optimized as it finds a better path.
 
 For a robot that can turn and is not holonomic, we can also sample a rotation aspect and utilize the same implementation of rrt
+<p align="center">
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/trajectoryrrt.png", width="600"/>
+</p>
+
+## Trajectory Sampling ##
+Instead of sampling random coordinates the robot goes, we can sample random trajectories the robt can follow. This gives a natural looking path compared to a random, sopradic path you may get from rrt.
+<p align="center">
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/trajectory.png", width="600"/>
+</p>
+
+For kinematics(), it will simply return the velocity in and direction of the robot given the state and the control of the robot. In propagate(), the robot will utilize the controls list and apply it from the latest state position, starting from the original state. First, it will gather its velocity control using kinematics(). Second, it will apply dt to the control from the previous state as a way simulate a discretized integral. Third, this will continue for the entire control array. Finally, it will return the trajectory of the robot after those controls have been applied from initial state.
+For the random shooting algorithm, this implementation of extend was used to utilize the propagated method created earlier. First, it will sample d between n1 and n2 (in rrt was set to 15 and 20 respectively). The dt set is between .1 and .02. For the control, a velocity between -.05 and 2 was chosen to promote forward movement while the angular velocity being between -.4 and .4 pi. The reason for this wide angle was to encourage a wider exploration space.
