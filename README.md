@@ -33,6 +33,24 @@ method: rrt (robot , obstacles , start , goal , iter n ):
 5. return path
 
 This implements an effective RRT and an exploration bias. At every 10 iteration, it will try to look for a straight shot to the end goal. If there is collision free path from any of the nodes, it will take that route and return a path.
-![alt text](https://github.com/joshyeram/pathfinding/blob/main/jyc70/rrtmap.png?raw=true)
-![alt text](https://github.com/joshyeram/pathfinding/blob/main/jyc70/animatedpaths.png?raw=true)
 
+<p align="center">
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/rrtmap.png", width="295"/>
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/animatedpaths.png", width="600"/>
+</p>
+
+To visualize the robot as a singular point, we can conduct a Minkowski Sum and get the configuration space.
+
+<p align="center">
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/configspace.png", width="300"/>
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/rrtConfig.png", width="290"/>
+</p>
+
+In order to optimize rrt, we can continous sample for a set iteration instead, changing the closest neighbor for log n neighbors as each one is sampled.
+<p align="center">
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/star1.png", width="300"/>
+  <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/star2.png", width="300"/>
+</p>
+As the number of iterations grows, the path becomes more optimized as it finds a better path.
+
+For a robot that can turn and is not holonomic, we can also sample a rotation aspect and utilize the same implementation of rrt
