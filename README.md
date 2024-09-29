@@ -17,7 +17,7 @@ method: isCollisionFree(robot , point , obstacles):
 The extensive edge cases for 2 were to take into consideration if the robots were touching but not colliding with one another. Thus, in this implementation, touching is not considered colliding. 3 was used to see if any of the robots or the obstacles were completely inside one another as the slope-intercept does not take care of that edge case. 4 was utilized to check the conditions 2 and 3 could not. The run time for one collision check is therefore O(n) + O(nm) + O(nm) + O(nm) = O(nm) where n = number of vertices of the robot and m = number of vertices of the obstacle. It will return True if it is collision-free and False otherwise.
 
 ### k-d tree ###
-To find the closest node given a coordinate, a k-d tree was utilized. A k-d tree is a binary tree in which at each depth, the value which is compared is the kth coordinate. For example, it will compare x in the first layer, y in the second layer, and z in the third layer. On the fourth layer, it will repeat by comparing the x coordinate.
+A k-d tree was utilized to find the closest node given a coordinate. A k-d tree is a binary tree in which at each depth, the value that is compared is the kth coordinate. For example, it will compare x in the first layer, y in the second layer, and z in the third layer. On the fourth layer, it will repeat by comparing the x coordinate.
 
 ### RRT implementation ###
 method: rrt (robot, obstacles, start, goal, iter n ):
@@ -46,7 +46,7 @@ To visualize the robot as a singular point, we can conduct a Minkowski Sum and g
   <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/rrtConfig.png", width="290"/>
 </p>
 
-In order to optimize rrt, we can continous sample for a set iteration instead, changing the closest neighbor for log n neighbors as each one is sampled.
+To optimize rrt, we can continuously sample for a set iteration instead, of changing the closest neighbor for log n neighbors as each one is sampled.
 <p align="center">
   <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/star1.png", width="300"/>
   <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/star2.png", width="300"/>
@@ -59,10 +59,10 @@ For a robot that can turn and is not holonomic, we can also sample a rotation as
 </p>
 
 ## Trajectory Sampling ##
-Instead of sampling random coordinates the robot goes, we can sample random trajectories the robt can follow. This gives a natural looking path compared to a random, sopradic path you may get from rrt.
+Instead of sampling random coordinates the robot goes to, we can sample random trajectories the robot can follow. This gives a natural-looking path compared to a random, sporadic path you may get from rrt.
 <p align="center">
   <img src="https://github.com/joshyeram/pathfinding/blob/main/jyc70/trajectory.png", width="600"/>
 </p>
 
-For kinematics(), it will simply return the velocity in and direction of the robot given the state and the control of the robot. In propagate(), the robot will utilize the controls list and apply it from the latest state position, starting from the original state. First, it will gather its velocity control using kinematics(). Second, it will apply dt to the control from the previous state as a way to simulate a discretized integral. Third, this will continue for the entire control array. Finally, it will return the trajectory of the robot after those controls have been applied from the initial state.
-For the random shooting algorithm, this implementation of extending was used to utilize the propagated method created earlier. First, it will sample d between n1 and n2 (in rrt was set to 15 and 20 respectively). The dt set is between .1 and .02. For the control, a velocity between -.05 and 2 was chosen to promote forward movement while the angular velocity was between -.4 and .4 pi. The reason for this wide-angle was to encourage a wider exploration space.
+For kinematics(), it will simply return the velocity in the direction of the robot given the state and the control of the robot. In propagate(), the robot will utilize the controls list and apply it from the latest state position, starting from the original state. First, it will gather its velocity control using kinematics(). Second, it will apply dt to the previous state's control to simulate a discretized integral. Third, this will continue for the entire control array. Finally, it will return the trajectory of the robot after those controls have been applied from the initial state.
+For the random shooting algorithm, this implementation of extending was used to utilize the propagated method created earlier. First, it will sample d between n1 and n2 (in rrt was set to 15 and 20 respectively). The dt set is between .1 and .02. For the control, a velocity between -.05 and 2 was chosen to promote forward movement while the angular velocity was between -.4 and .4 pi. The reason for this wide angle was to encourage a wider exploration space.
